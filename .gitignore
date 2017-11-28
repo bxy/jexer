@@ -1,6 +1,7 @@
 *.class
 bin/**
 build/**
+target/**
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
@@ -23,3 +24,5 @@ hs_err_pid*
 # Scratch space
 misc/**
 /.project~
+/.idea
+*.iml

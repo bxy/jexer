@@ -910,25 +910,25 @@ public final class TelnetInputStream extends InputStream
                 if (subnegBuffer.get(i) == (byte)TELNET_IAC) {
                     i++;
                 }
-                windowWidth = subnegBuffer.get(i) * 256;
+                windowWidth = (subnegBuffer.get(i) & 0xFF) * 256;
 
                 i++;
                 if (subnegBuffer.get(i) == (byte)TELNET_IAC) {
                     i++;
                 }
-                windowWidth += subnegBuffer.get(i);
+                windowWidth += subnegBuffer.get(i) & 0xFF;
 
                 i++;
                 if (subnegBuffer.get(i) == (byte)TELNET_IAC) {
                     i++;
                 }
-                windowHeight = subnegBuffer.get(i) * 256;
+                windowHeight = (subnegBuffer.get(i) & 0xFF) * 256;
 
                 i++;
                 if (subnegBuffer.get(i) == (byte)TELNET_IAC) {
                     i++;
                 }
-                windowHeight += subnegBuffer.get(i);
+                windowHeight += subnegBuffer.get(i) & 0xFF;
             }
             break;
 
