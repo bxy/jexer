@@ -1,7 +1,7 @@
-package jexer.demos;
+package bxy.jexer;
 
 import jexer.TApplication;
-import jexer.TImage;
+import bxy.jexer.TImage;
 import jexer.TWindow;
 import jexer.bits.Cell;
 import jexer.bits.Color;

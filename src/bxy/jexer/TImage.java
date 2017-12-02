@@ -1,5 +1,6 @@
-package jexer;
+package bxy.jexer;
 
+import jexer.TWidget;
 import jexer.bits.Cell;
 
 import java.util.Arrays;

@@ -1,7 +1,6 @@
-package jexer.demos;
+package bxy.jexer;
 
 import jexer.TApplication;
-import jexer.TAsciiChartWindow;
 
 public class PlaygroundApp extends TApplication {
     public PlaygroundApp(final BackendType backendType) throws Exception {

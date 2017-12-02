@@ -1,5 +1,6 @@
-package jexer.demos;
+package bxy.jexer;
 
+import bxy.jexer.PlaygroundApp;
 import jexer.TApplication;
 
 public class PlaygroundDemo {

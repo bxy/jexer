@@ -1,4 +1,8 @@
-package jexer;
+package bxy.jexer;
+
+import bxy.jexer.TImage;
+import jexer.TApplication;
+import jexer.TWindow;
 
 import static jexer.bits.GraphicsChars.CP437;
 
