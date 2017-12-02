@@ -347,19 +347,17 @@ public class TWindow extends TWidget {
      * Recenter the window on-screen.
      */
     public final void center() {
-        if ((flags & CENTERED) != 0) {
-            if (getWidth() < getScreen().getWidth()) {
-                setX((getScreen().getWidth() - getWidth()) / 2);
-            } else {
-                setX(0);
-            }
-            setY(((application.getDesktopBottom()
-                    - application.getDesktopTop()) - getHeight()) / 2);
-            if (getY() < 0) {
-                setY(0);
-            }
-            setY(getY() + application.getDesktopTop());
+        if (getWidth() < getScreen().getWidth()) {
+            setX((getScreen().getWidth() - getWidth()) / 2);
+        } else {
+            setX(0);
         }
+        setY(((application.getDesktopBottom()
+                - application.getDesktopTop()) - getHeight()) / 2);
+        if (getY() < 0) {
+            setY(0);
+        }
+        setY(getY() + application.getDesktopTop());
     }
 
     /**
@@ -542,7 +540,7 @@ public class TWindow extends TWidget {
         }
 
         // Center window if specified
-        center();
+        if (isCentered()) center();
 
         // Add me to the application
         application.addWindow(this);
@@ -574,39 +572,48 @@ public class TWindow extends TWidget {
     }
 
     /**
-     * Returns true if this window is modal.
+     * Check MODAL flag
      *
      * @return true if this window is modal
      */
     public final boolean isModal() {
-        if ((flags & MODAL) == 0) {
-            return false;
-        }
-        return true;
+        return (flags & MODAL) != 0;
     }
 
     /**
-     * Returns true if this window has a close box.
+     * Check RESIZABLE flag
+     *
+     * @return true if this window is resizable
+     */
+    public final boolean isResizable() {
+        return (flags & RESIZABLE) != 0;
+    }
+
+    /**
+     * Check CENTERED flag
+     *
+     * @return true if this window is centered
+     */
+    public final boolean isCentered() {
+        return (flags & CENTERED) != 0;
+    }
+
+    /**
+     * Check NOCLOSEBOX flag
      *
      * @return true if this window has a close box
      */
     public final boolean hasCloseBox() {
-        if ((flags & NOCLOSEBOX) != 0) {
-            return true;
-        }
-        return false;
+        return (flags & NOCLOSEBOX) == 0;
     }
 
     /**
-     * Returns true if this window has a maximize/zoom box.
+     * Check NOZOOMBOX flag
      *
      * @return true if this window has a maximize/zoom box
      */
     public final boolean hasZoomBox() {
-        if ((flags & NOZOOMBOX) != 0) {
-            return true;
-        }
-        return false;
+        return (flags & NOZOOMBOX) == 0;
     }
 
     /**
@@ -715,7 +722,7 @@ public class TWindow extends TWidget {
         if (isActive()) {
 
             // Draw the close button
-            if ((flags & NOCLOSEBOX) == 0) {
+            if (hasCloseBox()) {
                 putCharXY(2, 0, '[', border);
                 putCharXY(4, 0, ']', border);
                 if (mouseOnClose() && mouse.isMouse1()) {
@@ -732,7 +739,7 @@ public class TWindow extends TWidget {
             }
 
             // Draw the maximize button
-            if (!isModal() && ((flags & NOZOOMBOX) == 0)) {
+            if (!isModal() && hasZoomBox()) {
 
                 putCharXY(getWidth() - 5, 0, '[', border);
                 putCharXY(getWidth() - 3, 0, ']', border);
@@ -750,7 +757,7 @@ public class TWindow extends TWidget {
                 }
 
                 // Draw the resize corner
-                if ((flags & RESIZABLE) != 0) {
+                if (isResizable()) {
                     putCharXY(getWidth() - 2, getHeight() - 1,
                         GraphicsChars.SINGLE_BAR,
                         getTheme().getColor("twindow.border.windowmove"));
@@ -772,7 +779,7 @@ public class TWindow extends TWidget {
      * @return true if mouse is currently on the close button
      */
     protected boolean mouseOnClose() {
-        if ((flags & NOCLOSEBOX) != 0) {
+        if (!hasCloseBox()) {
             return false;
         }
         if ((mouse != null)
@@ -790,7 +797,7 @@ public class TWindow extends TWidget {
      * @return true if the mouse is currently on the maximize/restore button
      */
     protected boolean mouseOnMaximize() {
-        if ((flags & NOZOOMBOX) != 0) {
+        if (!hasZoomBox()) {
             return false;
         }
         if ((mouse != null)
@@ -811,7 +818,7 @@ public class TWindow extends TWidget {
      * corner
      */
     protected boolean mouseOnResize() {
-        if (((flags & RESIZABLE) != 0)
+        if (isResizable()
             && !isModal()
             && (mouse != null)
             && (mouse.getAbsoluteY() == getY() + getHeight() - 1)
@@ -1091,7 +1098,7 @@ public class TWindow extends TWidget {
             /*
              * Only permit keyboard resizing if the window was RESIZABLE.
              */
-            if ((flags & RESIZABLE) != 0) {
+            if (isResizable()) {
 
                 if (keypress.equals(kbShiftLeft)) {
                     if ((getWidth() > minimumWindowWidth)
@@ -1146,7 +1153,7 @@ public class TWindow extends TWidget {
 
             // Ctrl-W - close window
             if (keypress.equals(kbCtrlW)) {
-                if ((flags & NOCLOSEBOX) == 0) {
+                if (hasCloseBox()) {
                     application.closeWindow(this);
                 }
                 return;
@@ -1165,7 +1172,7 @@ public class TWindow extends TWidget {
             }
 
             // F5 - zoom
-            if (keypress.equals(kbF5) && ((flags & NOZOOMBOX) == 0)) {
+            if (keypress.equals(kbF5) && hasZoomBox()) {
                 if (maximized) {
                     restore();
                 } else {
@@ -1199,7 +1206,7 @@ public class TWindow extends TWidget {
         if (!(this instanceof TDesktop)) {
 
             if (command.equals(cmWindowClose)) {
-                if ((flags & NOCLOSEBOX) == 0) {
+                if (hasCloseBox()) {
                     application.closeWindow(this);
                 }
                 return;
@@ -1220,7 +1227,7 @@ public class TWindow extends TWidget {
                 return;
             }
 
-            if (command.equals(cmWindowZoom) && ((flags & NOZOOMBOX) == 0)) {
+            if (command.equals(cmWindowZoom) && hasZoomBox()) {
                 if (maximized) {
                     restore();
                 } else {
@@ -1245,7 +1252,7 @@ public class TWindow extends TWidget {
         if (!(this instanceof TDesktop)) {
 
             if (menu.getId() == TMenu.MID_WINDOW_CLOSE) {
-                if ((flags & NOCLOSEBOX) == 0) {
+                if (hasCloseBox()) {
                     application.closeWindow(this);
                 }
                 return;
@@ -1267,7 +1274,7 @@ public class TWindow extends TWidget {
             }
 
             if ((menu.getId() == TMenu.MID_WINDOW_ZOOM)
-                && ((flags & NOZOOMBOX) == 0)
+                && hasZoomBox()
             ) {
                 if (maximized) {
                     restore();

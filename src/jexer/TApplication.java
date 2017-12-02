@@ -1815,9 +1815,7 @@ public class TApplication implements Runnable {
                 activeWindow.onFocus();
             }
 
-            if (((window.flags & TWindow.CENTERED) == 0)
-                && smartWindowPlacement) {
-
+            if (!window.isCentered() && smartWindowPlacement) {
                 doSmartPlacement(window);
             }
         }
@@ -1905,13 +1903,13 @@ public class TApplication implements Runnable {
 
                 TWindow w = sorted.get(i);
                 w.setX(logicalX * newWidth);
-                w.setWidth(newWidth);
+                if(w.isResizable()) w.setWidth(newWidth);
                 if (i >= ((a - 1) * b)) {
                     w.setY((logicalY * newHeight2) + 1);
-                    w.setHeight(newHeight2);
+                    if(w.isResizable()) w.setHeight(newHeight2);
                 } else {
                     w.setY((logicalY * newHeight1) + 1);
-                    w.setHeight(newHeight1);
+                    if(w.isResizable()) w.setHeight(newHeight1);
                 }
             }
         }

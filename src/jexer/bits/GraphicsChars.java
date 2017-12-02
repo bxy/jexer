@@ -113,6 +113,11 @@ public final class GraphicsChars {
         '\u207f', '\u00b2', '\u25a0', '\u00a0'
     };
 
+    public static final char HEART                      = CP437[3];
+    public static final char DIAMOND                    = CP437[4];
+    public static final char CLUB                       = CP437[5];
+    public static final char SPADE                      = CP437[6];
+
     public static final char HATCH                      = CP437[0xB0];
     public static final char DOUBLE_BAR                 = CP437[0xCD];
     public static final char BOX                        = CP437[0xFE];
