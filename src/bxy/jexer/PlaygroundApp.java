@@ -1,6 +1,7 @@
 package bxy.jexer;
 
 import jexer.TApplication;
+import jexer.TEditColorThemeWindow;
 
 public class PlaygroundApp extends TApplication {
     public PlaygroundApp(final BackendType backendType) throws Exception {
@@ -12,6 +13,7 @@ public class PlaygroundApp extends TApplication {
 
         new PlaygroundWindow(this, 40, 10);
         new TAsciiChartWindow(this);
+        new TEditColorThemeWindow(this);
 
 
 

@@ -2,6 +2,7 @@ package bxy.jexer;
 
 import jexer.TWidget;
 import jexer.bits.Cell;
+import jexer.bits.CellAttributes;
 
 import java.util.Arrays;
 
@@ -12,18 +13,39 @@ public final class TImage extends TWidget {
         return y * getWidth() + x;
     }
 
-    public TImage(TWidget parent, int x, int y, int width, int height) {
-        super(parent, x, y, width, height);
-        data = new Cell[getWidth() * getHeight()];
-        Arrays.fill(data, new Cell());
+    public TImage(final TWidget parent, final int x, final int y, final int width, final int height) {
+        this(parent, x, y, width, height, parent.getWindow().getBackground());
     }
 
-    public TImage(TWidget parent, int x, int y, int width, char[] data) {
-        super(parent, x, y, width, data.length / width);
+    public TImage(final TWidget parent, final int x, final int y, final int width, final int height, final CellAttributes cellAttributes) {
+        this(parent, x, y, width, height, cellAttributes, null);
+    }
+
+    public TImage(final TWidget parent, final int x, final int y, final int width, final int height, final char[] chars) {
+        this(parent, x, y, width, height, parent.getWindow().getBackground(), chars);
+    }
+
+    public TImage(TWidget parent, int x, int y, int width, int height, final CellAttributes cellAttributes, final char[] chars) {
+        super(parent, x, y, width, height);
         this.data = new Cell[getWidth() * getHeight()];
-        for (int i = 0 ; i < getWidth(); i++)
-            for(int j = 0; j < getHeight(); j++)
-                this.data[calcIndex(i, j)] = new Cell(data[calcIndex(i, j)]);
+
+        Cell cell = new Cell();
+        cell.setAttr(cellAttributes);
+        Arrays.fill(this.data, cell);
+
+        if (chars == null) return;
+
+        for (int i = 0 ; i < getHeight(); i++)
+            for(int j = 0; j < getWidth(); j++) {
+                int index = calcIndex(j, i);
+
+                if(index >= chars.length) return;
+
+                cell = new Cell();
+                cell.setAttr(cellAttributes);
+                cell.setChar(chars[index]);
+                this.data[index] = cell;
+            }
     }
 
     public void setCell(int x, int y, Cell cell) {

@@ -1,6 +1,5 @@
 package bxy.jexer;
 
-import bxy.jexer.TImage;
 import jexer.TApplication;
 import jexer.TWindow;
 
@@ -10,7 +9,7 @@ public class TAsciiChartWindow extends TWindow {
 
     public TAsciiChartWindow(final TApplication application) {
         super(application, "ASCII Chart", 0, 0, 34, 10, NOZOOMBOX);
-        new TImage(this, 0, 0, 32, CP437);
+        new TImage(this, 0, 0, 32, 8, getTheme().getColor("twindow.background.modal"), CP437);
 
     }
 
