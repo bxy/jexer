@@ -11,7 +11,7 @@ import static jexer.TKeypress.*;
 /**
  * The background color picker.
  */
-public class TBackgroundColorPicker extends TWidget {
+public class TBackgroundPicker extends TWidget {
 
     /**
      * The selected color.
@@ -48,8 +48,8 @@ public class TBackgroundColorPicker extends TWidget {
      * @param x column relative to parent
      * @param y row relative to parent
      */
-    public TBackgroundColorPicker(final TWidget parent, String title, final int x, final int y,
-                                  final TAction enterAction, final TAction moveAction) {
+    public TBackgroundPicker(final TWidget parent, String title, final int x, final int y,
+                             final TAction enterAction, final TAction moveAction) {
 
         super(parent, x, y, 14, 4);
         this.title = title;
@@ -270,7 +270,7 @@ public class TBackgroundColorPicker extends TWidget {
      * @param mouse mouse button press event
      */
     @Override
-    public void onMouseDown(final TMouseEvent mouse) {
+    public void onMouseUp(final TMouseEvent mouse) {
         if (mouse.isMouseWheelUp()) {
             // Do this like kbUp
             int dotX = getXColorPosition(color);
@@ -299,7 +299,7 @@ public class TBackgroundColorPicker extends TWidget {
             dispatchMove();
         } else {
             // Let parent class handle it.
-            super.onMouseDown(mouse);
+            super.onMouseUp(mouse);
             return;
         }
 
