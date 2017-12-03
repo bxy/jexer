@@ -118,6 +118,11 @@ public final class GraphicsChars {
     public static final char CLUB                       = CP437[0x05];
     public static final char SPADE                      = CP437[0x06];
 
+    public static final char DOT                        = CP437[0x07];
+    public static final char DOT_INVERTED               = CP437[0x08];
+    public static final char CIRCLE                     = CP437[0x09];
+    public static final char CIRCLE_INVERTED            = CP437[0x0a];
+
     public static final char HATCH                      = CP437[0xB0];
     public static final char DOUBLE_BAR                 = CP437[0xCD];
     public static final char BOX                        = CP437[0xFE];
