@@ -136,6 +136,33 @@ public final class TAsciiChart extends TWidget {
                 getScreen().putCharXY(i, j, asciiImage.getCell(i,j));
     }
 
+
+    /**
+     * Handle mouse press events.
+     *
+     * @param mouse mouse button press event
+     */
+    @Override
+    public void onMouseDown(TMouseEvent mouse) {
+        if (mouse.isMouseWheelUp()) {
+            unselectCell();
+            if(selectedY > 0) selectedY--;
+            selectCell();
+            dispatchMove();
+
+        } else if (mouse.isMouseWheelDown()) {
+            unselectCell();
+            if(selectedY < getHeight() - 1) selectedY++;
+            selectCell();
+            dispatchMove();
+
+        } else {
+            // Let parent class handle it.
+            super.onMouseDown(mouse);
+            return;
+        }
+    }
+
     /**
      * handle mouse up
      * @param mouse mouse button event
