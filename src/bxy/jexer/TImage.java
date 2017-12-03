@@ -1,82 +1,139 @@
 package bxy.jexer;
 
-import jexer.TWidget;
 import jexer.bits.Cell;
 import jexer.bits.CellAttributes;
-import jexer.event.TMouseEvent;
 
 import java.util.Arrays;
 
-public final class TImage extends TWidget {
-    private int selectedX = -1;
-    private int selectedY = -1;
+/**
+ * Container for grid of Cells
+ */
+public final class TImage {
 
+    /**
+     * Image width
+     */
+    private int width;
+    /**
+     * Image height
+     */
+    private int height;
+
+    /**
+     * Image data
+     */
     private Cell[] data;
 
+    /**
+     * calculate data array index from image x,y coordinates
+     * @param x
+     * @param y
+     * @return
+     */
     private int calcIndex(int x, int y) {
-        return y * getWidth() + x;
+        assert(x >= 0 && x < width && y >= 0 && y < height);
+        return y * width + x;
     }
 
-    public TImage(final TWidget parent, final int x, final int y, final int width, final int height) {
-        this(parent, x, y, width, height, parent.getWindow().getBackground(), null);
+    /**
+     * Public constructor
+     * Creates empty TImage with default foreground/background
+     * @param width image width
+     * @param height image height
+     */
+    public TImage(final int width, final int height) {
+        this(width, height, new CellAttributes(), null);
     }
 
-    public TImage(final TWidget parent, final int x, final int y, final int width, final int height, final CellAttributes cellAttributes) {
-        this(parent, x, y, width, height, cellAttributes, null);
+    /**
+     * Public constructor
+     * Creates empty TImage with custom foreground/background
+     * @param width image width
+     * @param height image height
+     * @param cellAttributes image foreground/background attributes
+     */
+    public TImage(final int width, final int height, final CellAttributes cellAttributes) {
+        this(width, height, cellAttributes, null);
     }
 
-    public TImage(final TWidget parent, final int x, final int y, final int width, final int height, final char[] chars) {
-        this(parent, x, y, width, height, parent.getWindow().getBackground(), chars);
+    /**
+     * Public constructor
+     * Creates TImage with default foreground/background and image data populated from 'content'
+     * Image data is populated from left to right, top to bottom. If content is bigger than image size rest of the content will be discarded.
+     * @param width image width
+     * @param height image height
+     * @param content image data (only content, without cellAttributes)
+     */
+    public TImage(final int width, final int height, final char[] content) {
+        this(width, height, new CellAttributes(), content);
     }
 
-    public TImage(TWidget parent, int x, int y, int width, int height, final CellAttributes cellAttributes, final char[] chars) {
-        super(parent, x, y, width, height);
-        this.data = new Cell[getWidth() * getHeight()];
+    /**
+     * Public constructor
+     * Creates TImage with custom foreground/background and image data populated from 'content'
+     * Image data is populated from left to right, top to bottom. If content is bigger than image size rest of the content will be discarded.
+     * @param width image width
+     * @param height image height
+     * @param cellAttributes image foreground/background attributes
+     * @param content image data (only content, without cellAttributes)
+     */
+    public TImage(final int width, final int height, final CellAttributes cellAttributes, final char[] content) {
+        this.width = width;
+        this.height = height;
+        this.data = new Cell[width * height];
 
         Cell cell = new Cell();
         cell.setAttr(cellAttributes);
         Arrays.fill(this.data, cell);
 
-        if (chars == null) return;
+        if (content == null) return;
 
-        for (int i = 0; i < getHeight(); i++)
-            for (int j = 0; j < getWidth(); j++) {
+        for (int i = 0; i < this.height; i++)
+            for (int j = 0; j < this.width; j++) {
                 int index = calcIndex(j, i);
 
-                if (index >= chars.length) return;
+                if (index >= content.length) return;
 
                 cell = new Cell();
                 cell.setAttr(cellAttributes);
-                cell.setChar(chars[index]);
+                cell.setChar(content[index]);
                 this.data[index] = cell;
             }
     }
 
-    public void setCell(int x, int y, Cell cell) {
+    /**
+     * Get Cell data at x,y coordinates
+     * @param x cell column
+     * @param y cell row
+     * @return
+     */
+    public Cell getCell(final int x, final int y) {
+        return data[calcIndex(x, y)];
+    }
+
+    /**
+     * Set Cell data at x,y coordinates
+     * @param x cell column
+     * @param y cell row
+     * @param cell cell data
+     */
+    public void setCell(final int x, final int y, Cell cell) {
         data[calcIndex(x, y)] = cell;
     }
 
-    public Cell getSelectedCell() {
-        if (selectedX == -1 || selectedY == -1)
-            return null;
-        return data[calcIndex(selectedX, selectedY)];
+    /**
+     * Get image width
+     * @return image width
+     */
+    public int getWidth() {
+        return width;
     }
 
-    public int getSelectedIndex() {
-        if (selectedX == -1 || selectedY == -1) return -1;
-        return calcIndex(selectedX, selectedY);
-    }
-
-    @Override
-    public void draw() {
-        for (int i = 0; i < getWidth(); i++)
-            for (int j = 0; j < getHeight(); j++)
-                getScreen().putCharXY(i, j, data[calcIndex(i, j)]);
-    }
-
-    @Override
-    public void onMouseUp(TMouseEvent mouse) {
-        selectedX = mouse.getX();
-        selectedY = mouse.getY();
+    /**
+     * Get image height
+     * @return image height
+     */
+    public int getHeight() {
+        return height;
     }
 }
