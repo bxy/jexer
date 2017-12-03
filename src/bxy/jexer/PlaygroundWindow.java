@@ -1,6 +1,8 @@
 package bxy.jexer;
 
 import jexer.TApplication;
+import jexer.TBackgroundColorPicker;
+import jexer.TForegroundColorPicker;
 import jexer.TWindow;
 import jexer.bits.Cell;
 import jexer.bits.CellAttributes;
@@ -42,6 +44,9 @@ public class PlaygroundWindow extends TWindow {
         new TImageLabel(this, 12, 4, new TImage(30, 12, getTheme().getColor("twindow.background.modal"), CP437));
 
         new TImageLabel(this, 14, 5, new TImage(32, 8, CP437));
+
+        new TBackgroundColorPicker(this, "Zadnjica", 50, 2, null, null);
+        new TForegroundColorPicker(this, "Prednjica", 50, 6, null, null);
 
     }
 
