@@ -31,12 +31,10 @@ package jexer;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import jexer.bits.Color;
 import jexer.bits.ColorTheme;
 import jexer.bits.CellAttributes;
-import jexer.bits.GraphicsChars;
 import jexer.event.TKeypressEvent;
-import jexer.event.TMouseEvent;
+
 import static jexer.TKeypress.*;
 
 /**
@@ -64,12 +62,12 @@ public class TEditColorThemeWindow extends TWindow {
     /**
      * The foreground color.
      */
-    private TForegroundColorPicker foreground;
+    private TForegroundPicker foreground;
 
     /**
      * The background color.
      */
-    private TBackgroundColorPicker background;
+    private TBackgroundPicker background;
 
     /**
      * Set various widgets/values to the editing theme color.
@@ -133,7 +131,7 @@ public class TEditColorThemeWindow extends TWindow {
                 }
             }
         );
-        foreground = new TForegroundColorPicker(this, i18n.getString("foregroundLabel"), 42, 1,
+        foreground = new TForegroundPicker(this, i18n.getString("foregroundLabel"), 42, 1,
                 new TAction() {
                     // When the user presses Enter
                     public void DO() {
@@ -147,7 +145,7 @@ public class TEditColorThemeWindow extends TWindow {
                     }
                 }
         );
-        background = new TBackgroundColorPicker(this, i18n.getString("backgroundLabel"), 42, 7,
+        background = new TBackgroundPicker(this, i18n.getString("backgroundLabel"), 42, 7,
                 new TAction() {
                     // When the user presses Enter
                     public void DO() {

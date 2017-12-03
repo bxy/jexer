@@ -94,12 +94,18 @@ public final class TAsciiChart extends TWidget {
         selectCell();
     }
 
+    /**
+     * color selected cell
+     */
     private void selectCell() {
         asciiImage.getCell(selectedX, selectedY).setForeColor(Color.YELLOW);
         asciiImage.getCell(selectedX, selectedY).setBold(true);
         asciiImage.getCell(selectedX, selectedY).setBackColor(Color.CYAN);
     }
 
+    /**
+     * restore default color for selected cell
+     */
     private void unselectCell() {
         asciiImage.getCell(selectedX, selectedY).setAttr(getTheme().getColor("ttext"));
     }
@@ -131,7 +137,7 @@ public final class TAsciiChart extends TWidget {
     }
 
     /**
-     * handle mouse
+     * handle mouse up
      * @param mouse mouse button event
      */
     @Override
@@ -156,8 +162,14 @@ public final class TAsciiChart extends TWidget {
     @Override
     public void onMouseDoubleClick(final TMouseEvent mouse) {
         dispatchEnter();
+
     }
 
+    /**
+     * Handle keystrokes.
+     *
+     * @param keypress keystroke event
+     */
     @Override
     public void onKeypress(final TKeypressEvent keypress) {
         if (keypress.equals(kbRight)) {
@@ -212,6 +224,7 @@ public final class TAsciiChart extends TWidget {
 
         } else if (keypress.equals(kbEnter)) {
             dispatchEnter();
+
         } else {
             // Pass to my parent
             super.onKeypress(keypress);
