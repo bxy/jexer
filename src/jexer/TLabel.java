@@ -56,6 +56,7 @@ public final class TLabel extends TWidget {
      */
     public void setLabel(final String label) {
         this.label = label;
+        setWidth(label.length());
     }
 
     /**
