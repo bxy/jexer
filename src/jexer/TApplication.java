@@ -1160,7 +1160,7 @@ public class TApplication implements Runnable {
             }
 
             // See if we need to switch focus to another window or the menu
-            checkSwitchFocus((TMouseEvent) event);
+            if(checkSwitchFocus((TMouseEvent) event)) return;
         }
 
         // Handle menu events
@@ -2105,7 +2105,7 @@ public class TApplication implements Runnable {
      *
      * @param mouse mouse event
      */
-    private void checkSwitchFocus(final TMouseEvent mouse) {
+    private boolean checkSwitchFocus(final TMouseEvent mouse) {
 
         if ((mouse.getType() == TMouseEvent.Type.MOUSE_DOWN)
             && (activeMenu != null)
@@ -2146,7 +2146,7 @@ public class TApplication implements Runnable {
                     menu.setActive(false);
                 }
             }
-            return;
+            return false;
         }
 
         // See if they hit the menu bar
@@ -2176,17 +2176,17 @@ public class TApplication implements Runnable {
                 // They switched menus
                 oldMenu.setActive(false);
             }
-            return;
+            return false;
         }
 
         // If a menu is still active, don't switch windows
         if (activeMenu != null) {
-            return;
+            return false;
         }
 
         // Only switch if there are multiple windows
         if (windows.size() < 2) {
-            return;
+            return false;
         }
 
         if (((focusFollowsMouse == true)
@@ -2197,7 +2197,7 @@ public class TApplication implements Runnable {
                 Collections.sort(windows);
                 if (windows.get(0).isModal()) {
                     // Modal windows don't switch
-                    return;
+                    return false;
                 }
 
                 for (TWindow window: windows) {
@@ -2212,7 +2212,7 @@ public class TApplication implements Runnable {
                         if (window == windows.get(0)) {
                             // Clicked on the same window, nothing to do
                             assert (window.isActive());
-                            return;
+                            return false;
                         }
 
                         // We will be switching to another window
@@ -2226,18 +2226,18 @@ public class TApplication implements Runnable {
                         window.setZ(0);
                         window.setActive(true);
                         window.onFocus();
-                        return;
+                        return true;
                     }
                 }
             }
 
             // Clicked on the background, nothing to do
-            return;
+            return false;
         }
 
         // Nothing to do: this isn't a mouse up, or focus isn't following
         // mouse.
-        return;
+        return false;
     }
 
     /**
