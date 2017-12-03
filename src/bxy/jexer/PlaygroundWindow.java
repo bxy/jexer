@@ -49,8 +49,9 @@ public class PlaygroundWindow extends TWindow {
         // image with default background and chars
         new TImageLabel(this, 16, 6, new TImage(32, 8, CP437));
 
-        new TBackgroundPicker(this, "Zadnjica", 50, 2);
-        new TForegroundPicker(this, "Prednjica", 50, 6);
+        new TAsciiChart(this, 50, 2);
+        new TForegroundPicker(this, "Prednjica", 51, 10); // 51 10
+        new TBackgroundPicker(this, "Zadnjica", 65, 10);
 
     }
 

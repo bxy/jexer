@@ -71,7 +71,9 @@ public final class TImage {
     /**
      * Public constructor
      * Creates TImage with custom foreground/background and image data populated from 'content'
-     * Image data is populated from left to right, top to bottom. If content is bigger than image size rest of the content will be discarded.
+     * Image data is populated from left to right, top to bottom.
+     * If content is bigger than image size rest of the content will be discarded.
+     * If content is smaller content will be used from start
      * @param width image width
      * @param height image height
      * @param cellAttributes image foreground/background attributes
@@ -91,12 +93,9 @@ public final class TImage {
         for (int i = 0; i < this.height; i++)
             for (int j = 0; j < this.width; j++) {
                 int index = calcIndex(j, i);
-
-                if (index >= content.length) return;
-
                 cell = new Cell();
                 cell.setAttr(cellAttributes);
-                cell.setChar(content[index]);
+                cell.setChar(content[index % content.length]);
                 this.data[index] = cell;
             }
     }
