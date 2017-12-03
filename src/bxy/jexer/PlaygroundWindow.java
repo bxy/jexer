@@ -40,13 +40,17 @@ public class PlaygroundWindow extends TWindow {
         cellAttributes.setForeColor(Color.WHITE);
         new TImageLabel(this, 10, 3, new TImage(10, 8, cellAttributes)).setCell(0,0, new Cell(HEART));
 
-        // image with theme background and chars
+        // image with theme background and chars smaller than image
         new TImageLabel(this, 12, 4, new TImage(30, 12, getTheme().getColor("twindow.background.modal"), CP437));
 
-        new TImageLabel(this, 14, 5, new TImage(32, 8, CP437));
+        // image with custom background and chars bigger than image size
+        new TImageLabel(this, 14, 5, new TImage(5, 5, cellAttributes, CP437));
 
-        new TBackgroundPicker(this, "Zadnjica", 50, 2, null, null);
-        new TForegroundPicker(this, "Prednjica", 50, 6, null, null);
+        // image with default background and chars
+        new TImageLabel(this, 16, 6, new TImage(32, 8, CP437));
+
+        new TBackgroundPicker(this, "Zadnjica", 50, 2);
+        new TForegroundPicker(this, "Prednjica", 50, 6);
 
     }
 
