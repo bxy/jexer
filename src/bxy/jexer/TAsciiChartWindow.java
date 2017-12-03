@@ -1,17 +1,17 @@
 package bxy.jexer;
 
+import jexer.TAction;
 import jexer.TApplication;
 import jexer.TLabel;
 import jexer.TWindow;
 import jexer.bits.GraphicsChars;
-import jexer.event.TMouseEvent;
 
 import java.util.Arrays;
 
 /**
  * Non resizable, non modal window with TAsciiChart
  * Grid view of Code Page 437 characters with additional char info in the bottom
- * Chars can be selected with a mouse (not with keyboard yet)
+ * Chars can be selected with a mouse or keyboard
  */
 public class TAsciiChartWindow extends TWindow {
 
@@ -32,7 +32,20 @@ public class TAsciiChartWindow extends TWindow {
         super(application, "ASCII Chart", 0, 0, 34, 12, NOZOOMBOX);
 
         // add ascii chart widget
-        asciiChart = new TAsciiChart(this, 0, 0);
+        asciiChart = new TAsciiChart(this, 0, 0,
+                new TAction() {
+                    // When the user presses Enter
+                    public void DO() {
+                        refreshLabels();
+                    }
+                },
+                new TAction() {
+                    // When the user presses Enter
+                    public void DO() {
+                        refreshLabels();
+                    }
+                }
+        );
 
         // add horizontal separator
         char[] line = new char[asciiChart.getWidth()];
@@ -51,25 +64,19 @@ public class TAsciiChartWindow extends TWindow {
 
         addLabel("Utf:", 24, 9, "ttext");
         labels[3] = new TLabel(this, "---", 28, 9);
+
+        refreshLabels();
+
     }
 
-    /**
-     * handle mouse
-     * @param mouse mouse button release event
-     */
-    @Override
-    public void onMouseUp(TMouseEvent mouse) {
-        super.onMouseUp(mouse);
-
+    private void refreshLabels() {
         // get selected cell from asciiChart and update info
         int index = asciiChart.getSelectedIndex();
-        if(index != -1) {
-            char ch = asciiChart.getSelectedCell().getChar();
-            labels[0].setLabel(String.valueOf(ch));
-            labels[1].setLabel(String.valueOf(index));
-            labels[2].setLabel("0x" + Integer.toHexString(index).toUpperCase());
-            labels[3].setLabel(Integer.toHexString((int) ch).toUpperCase());
-        }
-
+        char ch = asciiChart.getSelectedChar();
+        labels[0].setLabel(String.valueOf(ch));
+        labels[1].setLabel(String.valueOf(index));
+        labels[2].setLabel("0x" + Integer.toHexString(index).toUpperCase());
+        labels[3].setLabel(Integer.toHexString((int) ch).toUpperCase());
     }
+
 }
