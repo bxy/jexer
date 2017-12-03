@@ -76,7 +76,6 @@ public final class TImage extends TWidget {
 
     @Override
     public void onMouseUp(TMouseEvent mouse) {
-        super.onMouseUp(mouse);
         selectedX = mouse.getX();
         selectedY = mouse.getY();
     }

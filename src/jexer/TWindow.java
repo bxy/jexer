@@ -726,12 +726,12 @@ public class TWindow extends TWidget {
                 putCharXY(2, 0, '[', border);
                 putCharXY(4, 0, ']', border);
                 if (mouseOnClose() && mouse.isMouse1()) {
-                    putCharXY(3, 0, GraphicsChars.CP437[0x0F],
+                    putCharXY(3, 0, GraphicsChars.OCTOSTAR,
                         !isModal()
                         ? getTheme().getColor("twindow.border.windowmove")
                         : getTheme().getColor("twindow.border.modal.windowmove"));
                 } else {
-                    putCharXY(3, 0, GraphicsChars.CP437[0xFE],
+                    putCharXY(3, 0, GraphicsChars.BOX,
                         !isModal()
                         ? getTheme().getColor("twindow.border.windowmove")
                         : getTheme().getColor("twindow.border.modal.windowmove"));
@@ -744,7 +744,7 @@ public class TWindow extends TWidget {
                 putCharXY(getWidth() - 5, 0, '[', border);
                 putCharXY(getWidth() - 3, 0, ']', border);
                 if (mouseOnMaximize() && mouse.isMouse1()) {
-                    putCharXY(getWidth() - 4, 0, GraphicsChars.CP437[0x0F],
+                    putCharXY(getWidth() - 4, 0, GraphicsChars.OCTOSTAR,
                         getTheme().getColor("twindow.border.windowmove"));
                 } else {
                     if (maximized) {
