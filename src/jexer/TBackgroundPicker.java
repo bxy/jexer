@@ -270,7 +270,7 @@ public class TBackgroundPicker extends TWidget {
      * @param mouse mouse button press event
      */
     @Override
-    public void onMouseUp(final TMouseEvent mouse) {
+    public void onMouseDown(TMouseEvent mouse) {
         if (mouse.isMouseWheelUp()) {
             // Do this like kbUp
             int dotX = getXColorPosition(color);
@@ -290,7 +290,21 @@ public class TBackgroundPicker extends TWidget {
             color = getColorFromPosition(dotX, dotY);
             dispatchMove();
             return;
-        } else if ((mouse.getX() > 0)
+        } else {
+            // Let parent class handle it.
+            super.onMouseDown(mouse);
+            return;
+        }
+    }
+
+    /**
+     * Handle mouse up events.
+     *
+     * @param mouse mouse button up event
+     */
+    @Override
+    public void onMouseUp(final TMouseEvent mouse) {
+        if ((mouse.getX() > 0)
                 && (mouse.getX() < getWidth() - 1)
                 && (mouse.getY() > 0)
                 && (mouse.getY() < getHeight() - 1)
