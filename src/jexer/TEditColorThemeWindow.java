@@ -251,12 +251,12 @@ public class TEditColorThemeWindow extends TWindow {
                 // Use white-on-black for black.  All other colors use
                 // black-on-whatever.
                 attr.reset();
-                getScreen().putCharXY(dotX, dotY, GraphicsChars.CP437[0x07],
+                getScreen().putCharXY(dotX, dotY, GraphicsChars.DOT,
                     attr);
             } else {
                 attr.setForeColor(color);
                 attr.setBold(bold);
-                getScreen().putCharXY(dotX, dotY, '\u25D8', attr);
+                getScreen().putCharXY(dotX, dotY, GraphicsChars.DOT_INVERTED, attr);
             }
         }
 
@@ -507,11 +507,11 @@ public class TEditColorThemeWindow extends TWindow {
                 // Use white-on-black for black.  All other colors use
                 // black-on-whatever.
                 attr.reset();
-                getScreen().putCharXY(dotX, dotY, GraphicsChars.CP437[0x07],
+                getScreen().putCharXY(dotX, dotY, GraphicsChars.DOT,
                     attr);
             } else {
                 attr.setForeColor(color);
-                getScreen().putCharXY(dotX, dotY, '\u25D8', attr);
+                getScreen().putCharXY(dotX, dotY, GraphicsChars.DOT_INVERTED, attr);
             }
 
         }
