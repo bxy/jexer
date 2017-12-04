@@ -29,7 +29,7 @@ public class TBackgroundPicker extends TWidget {
     /**
      * Component title
      */
-    String title;
+    private String title;
 
     /**
      * The action to perform when the user selects an item (clicks or enter).
@@ -41,14 +41,30 @@ public class TBackgroundPicker extends TWidget {
      */
     private TAction moveAction = null;
 
+
     /**
      * Public constructor.
      *
      * @param parent parent widget
+     * @param title widget title
      * @param x column relative to parent
      * @param y row relative to parent
      */
-    public TBackgroundPicker(final TWidget parent, String title, final int x, final int y,
+    public TBackgroundPicker(final TWidget parent, final String title, final int x, final int y) {
+        this(parent, title, x, y, null, null);
+    }
+
+    /**
+     * Public constructor.
+     *
+     * @param parent parent widget
+     * @param title widget title
+     * @param x column relative to parent
+     * @param y row relative to parent
+     * @param enterAction action to perform when an item is selected
+     * @param moveAction action to perform when the user navigates to a new item with arrow/page keys
+     */
+    public TBackgroundPicker(final TWidget parent, final String title, final int x, final int y,
                              final TAction enterAction, final TAction moveAction) {
 
         super(parent, x, y, 14, 4);

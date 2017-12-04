@@ -58,10 +58,25 @@ public class TForegroundPicker extends TWidget {
      * Public constructor.
      *
      * @param parent parent widget
+     * @param title widget title
      * @param x column relative to parent
      * @param y row relative to parent
      */
-    public TForegroundPicker(final TWidget parent, String title, final int x, final int y,
+    public TForegroundPicker(final TWidget parent, final String title, final int x, final int y) {
+        this(parent, title, x, y, null, null);
+    }
+
+    /**
+     * Public constructor.
+     *
+     * @param parent parent widget
+     * @param title widget title
+     * @param x column relative to parent
+     * @param y row relative to parent
+     * @param enterAction action to perform when an item is selected
+     * @param moveAction action to perform when the user navigates to a new item with arrow/page keys
+     */
+    public TForegroundPicker(final TWidget parent, final String title, final int x, final int y,
                              final TAction enterAction, final TAction moveAction) {
 
         super(parent, x, y, 14, 6);

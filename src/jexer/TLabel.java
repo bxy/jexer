@@ -35,34 +35,23 @@ import jexer.bits.CellAttributes;
  */
 public final class TLabel extends TWidget {
 
+    // ------------------------------------------------------------------------
+    // Variables --------------------------------------------------------------
+    // ------------------------------------------------------------------------
+
     /**
      * Label text.
      */
     private String label = "";
 
     /**
-     * Get label text.
-     *
-     * @return label text
-     */
-    public String getLabel() {
-        return label;
-    }
-
-    /**
-     * Set label text.
-     *
-     * @param label new label text
-     */
-    public void setLabel(final String label) {
-        this.label = label;
-        setWidth(label.length());
-    }
-
-    /**
      * Label color.
      */
     private String colorKey;
+
+    // ------------------------------------------------------------------------
+    // Constructors -----------------------------------------------------------
+    // ------------------------------------------------------------------------
 
     /**
      * Public constructor, using the default "tlabel" for colorKey.
@@ -97,6 +86,10 @@ public final class TLabel extends TWidget {
         this.colorKey = colorKey;
     }
 
+    // ------------------------------------------------------------------------
+    // TWidget ----------------------------------------------------------------
+    // ------------------------------------------------------------------------
+
     /**
      * Draw a static label.
      */
@@ -109,6 +102,29 @@ public final class TLabel extends TWidget {
         color.setBackColor(background.getBackColor());
 
         getScreen().putStringXY(0, 0, label, color);
+    }
+
+    // ------------------------------------------------------------------------
+    // TLabel -----------------------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    /**
+     * Get label text.
+     *
+     * @return label text
+     */
+    public String getLabel() {
+        return label;
+    }
+
+    /**
+     * Set label text.
+     *
+     * @param label new label text
+     */
+    public void setLabel(final String label) {
+        this.label = label;
+        setWidth(label.length());
     }
 
 }
