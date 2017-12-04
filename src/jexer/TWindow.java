@@ -376,6 +376,32 @@ public class TWindow extends TWidget {
     }
 
     /**
+     * Checks if window position has changed after drag/move
+     * @return true if window changed position
+     */
+    private boolean isWindowPositionChanged() {
+        return oldWindowX != getX() || oldWindowY != getY();
+    }
+
+    /**
+     * Checks if window size has changed after resize
+     * @return true if window changed size
+     */
+    private boolean isWindowSizeChanged() {
+        return resizeWindowWidth != getWidth() || resizeWindowHeight != getHeight();
+    }
+
+    /**
+     * Stores current window size and position
+     */
+    private void storeWindowSizeAndPosition() {
+        oldWindowX = getX();
+        oldWindowY = getY();
+        resizeWindowWidth = getWidth();
+        resizeWindowHeight = getHeight();
+    }
+
+    /**
      * Handle mouse button presses.
      *
      * @param mouse mouse button event
@@ -397,11 +423,7 @@ public class TWindow extends TWidget {
             inWindowMove = true;
             moveWindowMouseX = mouse.getAbsoluteX();
             moveWindowMouseY = mouse.getAbsoluteY();
-            oldWindowX = getX();
-            oldWindowY = getY();
-            if (maximized) {
-                maximized = false;
-            }
+            storeWindowSizeAndPosition();
             return;
         }
         if (mouseOnResize()) {
@@ -409,11 +431,7 @@ public class TWindow extends TWidget {
             inWindowResize = true;
             moveWindowMouseX = mouse.getAbsoluteX();
             moveWindowMouseY = mouse.getAbsoluteY();
-            resizeWindowWidth = getWidth();
-            resizeWindowHeight = getHeight();
-            if (maximized) {
-                maximized = false;
-            }
+            storeWindowSizeAndPosition();
             return;
         }
 
@@ -440,12 +458,24 @@ public class TWindow extends TWidget {
         if ((inWindowMove) && (mouse.isMouse1())) {
             // Stop moving window
             inWindowMove = false;
+
+            // Reset maximized state if window changed its position
+            if(isWindowPositionChanged()) {
+                maximized = false;
+            }
+
             return;
         }
 
         if ((inWindowResize) && (mouse.isMouse1())) {
             // Stop resizing window
             inWindowResize = false;
+
+            // Reset maximized state if window changed its size
+            if(isWindowSizeChanged()) {
+                maximized = false;
+            }
+
             return;
         }
 
@@ -584,8 +614,10 @@ public class TWindow extends TWidget {
             // ESC or ENTER - Exit size/move
             if (keypress.equals(kbEsc) || keypress.equals(kbEnter)) {
                 inKeyboardResize = false;
+                if (isWindowPositionChanged() || isWindowSizeChanged()) {
+                    maximized = false;
+                }
             }
-
             if (keypress.equals(kbLeft)) {
                 if (getX() > 0) {
                     setX(getX() - 1);
@@ -645,7 +677,7 @@ public class TWindow extends TWidget {
                 onResize(new TResizeEvent(TResizeEvent.Type.WIDGET,
                         getWidth(), getHeight()));
 
-            } // if ((flags & RESIZABLE) != 0)
+            } // if (isResizable())
 
             return;
         }
@@ -748,6 +780,7 @@ public class TWindow extends TWidget {
 
             if (command.equals(cmWindowMove)) {
                 inKeyboardResize = true;
+                storeWindowSizeAndPosition();
                 return;
             }
 
@@ -800,6 +833,7 @@ public class TWindow extends TWidget {
 
             if (menu.getId() == TMenu.MID_WINDOW_MOVE) {
                 inKeyboardResize = true;
+                storeWindowSizeAndPosition();
                 return;
             }
 
