@@ -135,6 +135,16 @@ public class TWindow extends TWidget {
     protected boolean inWindowResize = false;
 
     /**
+     * If true, then the user clicked on window close and is closing window
+     */
+    protected boolean inWindowClosing = false;
+
+    /**
+     * If true, then the user clicked on window maximize/restore and is maximizing/restoring window
+     */
+    protected boolean inWindowMaximizing = false;
+
+    /**
      * If true, then the user selected "Size/Move" (or hit Ctrl-F5) and is
      * resizing/moving the window via the keyboard.
      */
@@ -426,6 +436,7 @@ public class TWindow extends TWidget {
             storeWindowSizeAndPosition();
             return;
         }
+
         if (mouseOnResize()) {
             // Begin window resize
             inWindowResize = true;
@@ -433,6 +444,16 @@ public class TWindow extends TWidget {
             moveWindowMouseY = mouse.getAbsoluteY();
             storeWindowSizeAndPosition();
             return;
+        }
+
+        if (mouseOnClose()) {
+            inWindowClosing = true;
+            return;
+        }
+
+        if (mouseOnMaximize()) {
+           inWindowMaximizing = true;
+           return;
         }
 
         // Give the shortcut bar a shot at this.
@@ -479,7 +500,10 @@ public class TWindow extends TWidget {
             return;
         }
 
-        if (mouse.isMouse1() && mouseOnClose()) {
+        if (mouse.isMouse1()
+                && mouseOnClose()
+                && inWindowClosing) {
+            inWindowClosing = false;
             if ((flags & HIDEONCLOSE) == 0) {
                 // Close window
                 application.closeWindow(this);
@@ -491,8 +515,10 @@ public class TWindow extends TWidget {
         }
 
         if ((mouse.getAbsoluteY() == getY())
-            && mouse.isMouse1()
-            && mouseOnMaximize()) {
+                && mouse.isMouse1()
+                && mouseOnMaximize()
+                && inWindowMaximizing) {
+            inWindowMaximizing = false;
             if (maximized) {
                 // Restore
                 restore();
@@ -513,6 +539,8 @@ public class TWindow extends TWidget {
             }
         }
 
+        inWindowClosing = false;
+        inWindowMaximizing = false;
         // I didn't take it, pass it on to my children
         super.onMouseUp(mouse);
     }
@@ -608,6 +636,11 @@ public class TWindow extends TWidget {
      */
     @Override
     public void onKeypress(final TKeypressEvent keypress) {
+
+        inWindowMove = false;
+        inWindowResize = false;
+        inWindowClosing = false;
+        inWindowMaximizing = false;
 
         if (inKeyboardResize) {
 
@@ -722,7 +755,10 @@ public class TWindow extends TWidget {
             }
 
             // F5 - zoom
-            if (keypress.equals(kbF5) && hasZoomBox()) {
+            if (keypress.equals(kbF5) && hasZoomBox() && !isModal()) {
+                if (inMovements()) {
+                    stopMovements();
+                }
                 if (maximized) {
                     restore();
                 } else {
@@ -779,12 +815,18 @@ public class TWindow extends TWidget {
             }
 
             if (command.equals(cmWindowMove)) {
+                if (inMovements()) {
+                    stopMovements();
+                }
                 inKeyboardResize = true;
                 storeWindowSizeAndPosition();
                 return;
             }
 
-            if (command.equals(cmWindowZoom) && hasZoomBox()) {
+            if (command.equals(cmWindowZoom) && hasZoomBox() && !isModal()) {
+                if (inMovements()) {
+                    stopMovements();
+                }
                 if (maximized) {
                     restore();
                 } else {
@@ -832,14 +874,21 @@ public class TWindow extends TWidget {
             }
 
             if (menu.getId() == TMenu.MID_WINDOW_MOVE) {
+                if (inMovements()) {
+                    stopMovements();
+                }
                 inKeyboardResize = true;
                 storeWindowSizeAndPosition();
                 return;
             }
 
             if ((menu.getId() == TMenu.MID_WINDOW_ZOOM)
-                && hasZoomBox()
+                && hasZoomBox() && !isModal()
             ) {
+                if (inMovements()) {
+                    stopMovements();
+                }
+
                 if (maximized) {
                     restore();
                 } else {
@@ -900,10 +949,10 @@ public class TWindow extends TWidget {
         if (isActive()) {
 
             // Draw the close button
-            if ((flags & NOCLOSEBOX) == 0) {
+            if (hasCloseBox()) {
                 putCharXY(2, 0, '[', border);
                 putCharXY(4, 0, ']', border);
-                if (mouseOnClose() && mouse.isMouse1()) {
+                if (inWindowClosing) {
                     putCharXY(3, 0, GraphicsChars.OCTOSTAR,
                         getBorderControls());
                 } else {
@@ -917,7 +966,7 @@ public class TWindow extends TWidget {
 
                 putCharXY(getWidth() - 5, 0, '[', border);
                 putCharXY(getWidth() - 3, 0, ']', border);
-                if (mouseOnMaximize() && mouse.isMouse1()) {
+                if (inWindowMaximizing) {
                     putCharXY(getWidth() - 4, 0, GraphicsChars.OCTOSTAR,
                         getBorderControls());
                 } else {
@@ -1208,7 +1257,11 @@ public class TWindow extends TWidget {
      * @return true if the window is moving
      */
     public boolean inMovements() {
-        if (inWindowResize || inWindowMove || inKeyboardResize) {
+        if (inWindowResize
+                || inWindowMove
+                || inKeyboardResize
+                || inWindowClosing
+                || inWindowMaximizing) {
             return true;
         }
         return false;
@@ -1221,6 +1274,8 @@ public class TWindow extends TWidget {
         inWindowResize = false;
         inWindowMove = false;
         inKeyboardResize = false;
+        inWindowClosing = false;
+        inWindowMaximizing = false;
     }
 
     /**
