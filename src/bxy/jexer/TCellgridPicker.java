@@ -2,23 +2,23 @@ package bxy.jexer;
 
 import jexer.TAction;
 import jexer.TWidget;
+import jexer.bits.Cell;
 import jexer.bits.Color;
-import jexer.bits.GraphicsChars;
 import jexer.event.TKeypressEvent;
 import jexer.event.TMouseEvent;
 
 import static jexer.TKeypress.*;
+import static jexer.TKeypress.kbEnter;
+import static jexer.TKeypress.kbPgDn;
 
 /**
- * Grid view of Code Page 437 characters
- * Chars can be selected with a mouse or keyboard
+ * Selectable Cellgrid widget
  */
-public final class TAsciiChart extends TWidget {
-
+public class TCellgridPicker extends TWidget {
     /**
-     * image to be drawn
+     * Cellgrid to be drawn
      */
-    private TImage asciiImage;
+    private Cellgrid cellgrid;
     /**
      * x coordinate of selected cell
      */
@@ -61,9 +61,10 @@ public final class TAsciiChart extends TWidget {
      * @param parent parent widget
      * @param x column relative to parent
      * @param y row relative to parent
+     * @param cellgrid cellgrid on the screen
      */
-    public TAsciiChart(final TWidget parent, final int x, final int y) {
-        this(parent, x, y, null, null);
+    public TCellgridPicker(final TWidget parent, final int x, final int y, final Cellgrid cellgrid) {
+        this(parent, x, y, cellgrid, null);
     }
 
     /**
@@ -71,10 +72,11 @@ public final class TAsciiChart extends TWidget {
      * @param parent parent widget
      * @param x column relative to parent
      * @param y row relative to parent
+     * @param cellgrid cellgrid on the screen
      * @param enterAction action to perform when an item is selected
      */
-    public TAsciiChart(final TWidget parent, final int x, final int y, final TAction enterAction) {
-        this(parent, x, y, enterAction, null);
+    public TCellgridPicker(final TWidget parent, final int x, final int y, final Cellgrid cellgrid, final TAction enterAction) {
+        this(parent, x, y, cellgrid, enterAction, null);
     }
 
     /**
@@ -82,58 +84,72 @@ public final class TAsciiChart extends TWidget {
      * @param parent parent widget
      * @param x column relative to parent
      * @param y row relative to parent
+     * @param cellgrid cellgrid on the screen
      * @param enterAction action to perform when an item is selected
      * @param moveAction action to perform when the user navigates to a new item with arrow/page keys
      */
-    public TAsciiChart(final TWidget parent, final int x, final int y, final TAction enterAction, final TAction moveAction) {
-        super(parent, x, y, 32, 8);
-        this.asciiImage = new TImage(32, 8, getTheme().getColor("ttext"), GraphicsChars.CP437);
+    public TCellgridPicker(final TWidget parent, final int x, final int y, final Cellgrid cellgrid, final TAction enterAction, final TAction moveAction) {
+        super(parent, x, y, cellgrid.getWidth(), cellgrid.getHeight());
+        this.cellgrid = cellgrid;
         this.enterAction = enterAction;
         this.moveAction = moveAction;
 
         selectCell();
     }
 
+    private Cell oldSelectedCell;
+
     /**
      * color selected cell
      */
     private void selectCell() {
-        asciiImage.getCell(selectedX, selectedY).setForeColor(Color.YELLOW);
-        asciiImage.getCell(selectedX, selectedY).setBold(true);
-        asciiImage.getCell(selectedX, selectedY).setBackColor(Color.CYAN);
+        oldSelectedCell = cellgrid.getCellCopy(selectedX, selectedY);
+        cellgrid.getCell(selectedX, selectedY).setForeColor(Color.YELLOW);
+        cellgrid.getCell(selectedX, selectedY).setBold(true);
+        cellgrid.getCell(selectedX, selectedY).setBackColor(Color.CYAN);
     }
 
     /**
      * restore default color for selected cell
      */
     private void unselectCell() {
-        asciiImage.getCell(selectedX, selectedY).setAttr(getTheme().getColor("ttext"));
+        cellgrid.getCell(selectedX, selectedY).setForeColor(oldSelectedCell.getForeColor());
+        cellgrid.getCell(selectedX, selectedY).setBold(oldSelectedCell.isBold());
+        cellgrid.getCell(selectedX, selectedY).setBackColor(oldSelectedCell.getBackColor());
     }
 
     /**
      * Get selected character
      * @return selected character
      */
-    public char getSelectedChar() {
-        return asciiImage.getCell(selectedX, selectedY).getChar();
+    public Cell getSelectedCell() {
+        return cellgrid.getCellCopy(selectedX, selectedY);
     }
 
     /**
-     * Get selected index in the image data array
-     * @return selected index
+     * Get selected column coordinate
+     * @return
      */
-    public int getSelectedIndex() {
-        return selectedY * asciiImage.getWidth() + selectedX;
+    public int getSelectedX() {
+        return selectedX;
     }
 
     /**
-     * Draw ascii chart
+     * Get selected row coordinate
+     * @return
+     */
+    public int getSelectedY() {
+        return selectedY;
+    }
+
+    /**
+     * Draw cellgrid
      */
     @Override
     public void draw() {
         for (int i = 0; i < getWidth(); i++)
             for (int j = 0; j < getHeight(); j++)
-                getScreen().putCharXY(i, j, asciiImage.getCell(i,j));
+                getScreen().putCharXY(i, j, cellgrid.getCell(i,j));
     }
 
 
@@ -259,6 +275,5 @@ public final class TAsciiChart extends TWidget {
         }
 
     }
-
 
 }

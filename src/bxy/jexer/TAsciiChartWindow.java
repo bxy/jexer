@@ -22,7 +22,7 @@ public class TAsciiChartWindow extends TWindow {
     /**
      * ascii chart widget
      */
-    private TAsciiChart asciiChart;
+    private TCellgridPicker asciiChart;
 
     /**
      * Public constructor
@@ -32,7 +32,8 @@ public class TAsciiChartWindow extends TWindow {
         super(application, "ASCII Chart", 0, 0, 34, 12, NOZOOMBOX);
 
         // add ascii chart widget
-        asciiChart = new TAsciiChart(this, 0, 0,
+        asciiChart = new TCellgridPicker(this, 0, 0,
+                new Cellgrid(32, 8, getTheme().getColor("ttext"), GraphicsChars.CP437),
                 new TAction() {
                     // When the user presses Enter
                     public void DO() {
@@ -71,8 +72,8 @@ public class TAsciiChartWindow extends TWindow {
 
     private void refreshLabels() {
         // get selected cell from asciiChart and update info
-        int index = asciiChart.getSelectedIndex();
-        char ch = asciiChart.getSelectedChar();
+        int index = asciiChart.getSelectedY() * asciiChart.getWidth() + asciiChart.getSelectedX();
+        char ch = asciiChart.getSelectedCell().getChar();
         labels[0].setLabel(String.valueOf(ch));
         labels[1].setLabel(String.valueOf(index));
         labels[2].setLabel("0x" + Integer.toHexString(index).toUpperCase());
