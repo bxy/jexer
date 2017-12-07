@@ -3,6 +3,7 @@ package bxy.jexer;
 import jexer.TAction;
 import jexer.TWidget;
 import jexer.bits.Cell;
+import jexer.bits.CellAttributes;
 import jexer.bits.Color;
 import jexer.event.TKeypressEvent;
 import jexer.event.TMouseEvent;
@@ -27,6 +28,11 @@ public class TCellgridPicker extends TWidget {
      * y coordinate of selected cell
      */
     private int selectedY = 0;
+
+    /**
+     * Attributes of selected cell
+     */
+    private CellAttributes selectedCellAttributes;
 
     /**
      * The action to perform when the user selects an item (clicks or enter).
@@ -94,28 +100,11 @@ public class TCellgridPicker extends TWidget {
         this.enterAction = enterAction;
         this.moveAction = moveAction;
 
-        select();
-    }
+        this.selectedCellAttributes = new CellAttributes();
+        this.selectedCellAttributes.setForeColor(Color.YELLOW);
+        this.selectedCellAttributes.setBold(true);
+        this.selectedCellAttributes.setBackColor(Color.CYAN);
 
-    private Cell oldSelectedCell;
-
-    /**
-     * color selected cell
-     */
-    private void select() {
-        oldSelectedCell = cellgrid.getCellCopy(selectedX, selectedY);
-        cellgrid.getCell(selectedX, selectedY).setForeColor(Color.YELLOW);
-        cellgrid.getCell(selectedX, selectedY).setBold(true);
-        cellgrid.getCell(selectedX, selectedY).setBackColor(Color.CYAN);
-    }
-
-    /**
-     * restore default color for selected cell
-     */
-    private void unselect() {
-        cellgrid.getCell(selectedX, selectedY).setForeColor(oldSelectedCell.getForeColor());
-        cellgrid.getCell(selectedX, selectedY).setBold(oldSelectedCell.isBold());
-        cellgrid.getCell(selectedX, selectedY).setBackColor(oldSelectedCell.getBackColor());
     }
 
     /**
@@ -133,10 +122,8 @@ public class TCellgridPicker extends TWidget {
      */
     public void setSelected(final int x, final int y) {
         if(0 <= x && x < getWidth() && 0 <= y && y < getHeight()) {
-            unselect();
             selectedX = x;
             selectedY = y;
-            select();
         } else {
             throw new IllegalArgumentException("Invalid coordinates: " + x + ", " + y);
         }
@@ -163,9 +150,15 @@ public class TCellgridPicker extends TWidget {
      */
     @Override
     public void draw() {
-        for (int i = 0; i < getWidth(); i++)
-            for (int j = 0; j < getHeight(); j++)
-                getScreen().putCharXY(i, j, cellgrid.getCell(i,j));
+        for (int i = 0; i < getWidth(); i++) {
+            for (int j = 0; j < getHeight(); j++) {
+                if (i == selectedX && j == selectedY) {
+                    getScreen().putCharXY(i, j, cellgrid.getCell(i, j).getChar(), selectedCellAttributes);
+                } else {
+                    getScreen().putCharXY(i, j, cellgrid.getCell(i, j));
+                }
+            }
+        }
     }
 
 
@@ -177,15 +170,11 @@ public class TCellgridPicker extends TWidget {
     @Override
     public void onMouseDown(TMouseEvent mouse) {
         if (mouse.isMouseWheelUp()) {
-            unselect();
             if(selectedY > 0) selectedY--;
-            select();
             dispatchMove();
 
         } else if (mouse.isMouseWheelDown()) {
-            unselect();
             if(selectedY < getHeight() - 1) selectedY++;
-            select();
             dispatchMove();
 
         } else {
@@ -201,13 +190,9 @@ public class TCellgridPicker extends TWidget {
      */
     @Override
     public void onMouseUp(TMouseEvent mouse) {
-        // clear previously selected cell
-        unselect();
-
         // select clicked cell
         selectedX = mouse.getX();
         selectedY = mouse.getY();
-        select();
 
         dispatchMove();
 
@@ -232,53 +217,37 @@ public class TCellgridPicker extends TWidget {
     @Override
     public void onKeypress(final TKeypressEvent keypress) {
         if (keypress.equals(kbRight)) {
-            unselect();
             if(selectedX < getWidth() - 1) selectedX++;
-            select();
             dispatchMove();
 
         } else if (keypress.equals(kbLeft)) {
-            unselect();
             if(selectedX > 0) selectedX--;
-            select();
             dispatchMove();
 
         } else if (keypress.equals(kbUp)) {
-            unselect();
             if(selectedY > 0) selectedY--;
-            select();
             dispatchMove();
 
         } else if (keypress.equals(kbDown)) {
-            unselect();
             if(selectedY < getHeight() - 1) selectedY++;
-            select();
             dispatchMove();
 
         } else if (keypress.equals(kbHome)) {
-            unselect();
             selectedX = 0;
             selectedY = 0;
-            select();
             dispatchMove();
 
         } else if (keypress.equals(kbEnd)) {
-            unselect();
             selectedX = getWidth() - 1;
             selectedY = getHeight() - 1;
-            select();
             dispatchMove();
 
         } else if (keypress.equals(kbPgUp)) {
-            unselect();
             selectedY = 0;
-            select();
             dispatchMove();
 
         } else if (keypress.equals(kbPgDn)) {
-            unselect();
             selectedY = getHeight() - 1;
-            select();
             dispatchMove();
 
         } else if (keypress.equals(kbEnter)) {

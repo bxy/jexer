@@ -1,9 +1,6 @@
 package bxy.jexer;
 
-import jexer.TApplication;
-import jexer.TBackgroundPicker;
-import jexer.TForegroundPicker;
-import jexer.TWindow;
+import jexer.*;
 import jexer.bits.Cell;
 import jexer.bits.CellAttributes;
 import jexer.bits.Color;
@@ -12,6 +9,11 @@ import jexer.bits.GraphicsChars;
 import static jexer.bits.GraphicsChars.*;
 
 public class PlaygroundWindow extends TWindow {
+
+    TCellgridLabel asciiLabel;
+
+    TBackgroundPicker backgroundPicker;
+    TForegroundPicker foregroundPicker;
 
     public PlaygroundWindow(TApplication application, int width, int height) {
         super(application, "Playground Window", width, height);
@@ -48,12 +50,45 @@ public class PlaygroundWindow extends TWindow {
         new TCellgridLabel(this, 14, 5, new Cellgrid(5, 5, cellAttributes, CP437));
 
         // cellgrid with default background and chars
-        new TCellgridLabel(this, 16, 6, new Cellgrid(32, 8, CP437));
+        asciiLabel = new TCellgridLabel(this, 16, 6, new Cellgrid(32, 8, CP437));
 
         new TCellgridPicker(this, 50, 2, new Cellgrid(32, 8, getTheme().getColor("ttext"), GraphicsChars.CP437)).setSelected(5,5);
-        new TForegroundPicker(this, "Foreground", 51, 10);
-        new TBackgroundPicker(this, "Background", 65, 10);
 
+        foregroundPicker = new TForegroundPicker(this, "Foreground", 51, 10,
+                new TAction() {
+                    // When the user presses Enter
+                    public void DO() {
+                        refreshLabel();
+                    }
+                },
+                new TAction() {
+                    // When the user presses Enter
+                    public void DO() {
+                        refreshLabel();
+                    }
+                });
+        backgroundPicker = new TBackgroundPicker(this, "Background", 65, 10,
+                new TAction() {
+                    // When the user presses Enter
+                    public void DO() {
+                        refreshLabel();
+                    }
+                },
+                new TAction() {
+                    // When the user presses Enter
+                    public void DO() {
+                        refreshLabel();
+                    }
+                });
+
+    }
+
+    private void refreshLabel() {
+        CellAttributes cellAttributes = new CellAttributes();
+        cellAttributes.setForeColor(foregroundPicker.getColor());
+        cellAttributes.setBold(foregroundPicker.isBold());
+        cellAttributes.setBackColor(backgroundPicker.getColor());
+        asciiLabel.setOverrideCellAttributes(cellAttributes);
     }
 
 
