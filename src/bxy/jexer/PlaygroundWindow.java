@@ -50,9 +50,9 @@ public class PlaygroundWindow extends TWindow {
         // cellgrid with default background and chars
         new TCellgridLabel(this, 16, 6, new Cellgrid(32, 8, CP437));
 
-        new TCellgridPicker(this, 50, 2, new Cellgrid(32, 8, getTheme().getColor("ttext"), GraphicsChars.CP437));
-        new TForegroundPicker(this, "Prednjica", 51, 10); // 51 10
-        new TBackgroundPicker(this, "Zadnjica", 65, 10);
+        new TCellgridPicker(this, 50, 2, new Cellgrid(32, 8, getTheme().getColor("ttext"), GraphicsChars.CP437)).setSelected(5,5);
+        new TForegroundPicker(this, "Foreground", 51, 10);
+        new TBackgroundPicker(this, "Background", 65, 10);
 
     }
 
