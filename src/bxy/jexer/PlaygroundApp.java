@@ -20,7 +20,7 @@ public class PlaygroundApp extends TApplication {
             swingMenu.addItem(3001, "&Smaller -2");
         }
 
-        new PlaygroundWindow(this, 40, 10);
+        new PlaygroundWindow(this, 60, 15);
         new TAsciiChartWindow(this);
         new TEditColorThemeWindow(this);
 

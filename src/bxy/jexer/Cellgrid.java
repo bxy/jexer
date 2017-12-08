@@ -93,7 +93,8 @@ public final class Cellgrid {
     }
 
     /**
-     * Get Cell data at column x, row y coordinates
+     * Get original Cell data at column x, row y coordinates.
+     * Can be used to set Cell properties e.g getCell(x,y).setTo(newCell)
      * @param x cell column
      * @param y cell row
      * @return cell data
@@ -103,7 +104,9 @@ public final class Cellgrid {
     }
 
     /**
-     * Get Cell copy at column x, row y
+     * Get Cell copy at column x, row y.
+     * Can be used instead of getCell(x,y) to get cell copy to prevent changing cell grid data with cell.set...
+     * If you need to change Cell data use getCell(x,y)
      * @param x cell column
      * @param y cell row
      * @return cell copy

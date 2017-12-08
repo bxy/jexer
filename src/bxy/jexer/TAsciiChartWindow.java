@@ -70,8 +70,10 @@ public class TAsciiChartWindow extends TWindow {
 
     }
 
+    /**
+     * get selected cell from asciiChart and update info
+     */
     private void refreshLabels() {
-        // get selected cell from asciiChart and update info
         int index = asciiChart.getSelectedY() * asciiChart.getWidth() + asciiChart.getSelectedX();
         char ch = asciiChart.getSelectedCell().getChar();
         labels[0].setLabel(String.valueOf(ch));
