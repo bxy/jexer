@@ -13,7 +13,7 @@ public class PlaygroundWindow extends TWindow {
     TCellgridLabel asciiLabel;
     TCellgridPicker drawLabel;
     TCellgridPicker boxDrawingLabel;
-    TCellgridLabel ansiLabel;
+    TCellgridLabel ansiArtLabel;
 
     TBackgroundPicker backgroundPicker;
     TForegroundPicker foregroundPicker;
@@ -55,9 +55,9 @@ public class PlaygroundWindow extends TWindow {
         // cellgrid with default background and chars
         asciiLabel = new TCellgridLabel(this, 12, 6, new Cellgrid(32, 8, CP437));
 
-        new TCellgridPicker(this, 46, 1, new Cellgrid(32, 8, getTheme().getColor("ttext"), GraphicsChars.CP437)).setSelected(5,5);
+        new TCellgridPicker(this, 46, 0, new Cellgrid(32, 8, getTheme().getColor("ttext"), GraphicsChars.CP437)).setSelected(5,5);
 
-        foregroundPicker = new TForegroundPicker(this, "Foreground", 47, 10,
+        foregroundPicker = new TForegroundPicker(this, "Foreground", 45, 8,
                 new TAction() {
                     // When the user presses Enter
                     public void DO() {
@@ -70,7 +70,7 @@ public class PlaygroundWindow extends TWindow {
                         refreshLabel();
                     }
                 });
-        backgroundPicker = new TBackgroundPicker(this, "Background", 61, 10,
+        backgroundPicker = new TBackgroundPicker(this, "Background", 59, 8,
                 new TAction() {
                     // When the user presses Enter
                     public void DO() {
@@ -92,7 +92,7 @@ public class PlaygroundWindow extends TWindow {
 //        String ansiChars = "\u2590\u258c\u2580\u2584\u00b7\u25a0" +
 //                "\u00A0\u2591\u2592\u2593\u2588";
 
-        ansiLabel = new TCellgridLabel(this, 47, 16, new Cellgrid(ansiChars.length() ,3, ansiChars.toCharArray()));
+        ansiArtLabel = new TCellgridLabel(this, 59, 12, new Cellgrid(ansiChars.length() ,2, ansiChars.toCharArray()));
 
         String drawingChars = "\u2580\u2581\u2582\u2583\u2584\u2585\u2586\u2587\u2588\u2589\u258a\u258b\u258c\u258d\u258e\u258f" +
                 "\u2590\u2591\u2592\u2593\u2594\u2595\u2596\u2597\u2598\u2599\u259a\u259b\u259c\u259d\u259e\u259f";
@@ -109,7 +109,7 @@ public class PlaygroundWindow extends TWindow {
 
         boxDrawingLabel = new TCellgridPicker(this, 1, 13, new Cellgrid(16,8, getTheme().getColor("ttext"), boxDrawingChars));
 
-
+        new TColorPicker(this, 46, 16, 2, 1);
 
     }
 
@@ -119,7 +119,7 @@ public class PlaygroundWindow extends TWindow {
         cellAttributes.setBold(foregroundPicker.isBold());
         cellAttributes.setBackColor(backgroundPicker.getColor());
         asciiLabel.setOverrideCellAttributes(cellAttributes);
-        ansiLabel.setOverrideCellAttributes(cellAttributes);
+        ansiArtLabel.setOverrideCellAttributes(cellAttributes);
     }
 
 
