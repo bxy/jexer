@@ -2,8 +2,10 @@ package bxy.jexer;
 
 import bxy.jexer.Cellgrid;
 import jexer.TWidget;
+import jexer.bits.Cell;
 import jexer.bits.CellAttributes;
 import jexer.bits.Color;
+import jexer.bits.GraphicsChars;
 
 public class TColorPicker extends TWidget {
 
@@ -185,6 +187,7 @@ public class TColorPicker extends TWidget {
                     int colorIndex = reverse ? colors.length - 1 - index % colors.length : index % colors.length;
                     cellgrid.getCell(i, j).setForeColor(colors[colorIndex]);
                     cellgrid.getCell(i, j).setBold(index / colors.length == (boldFirst ? 0 : 1));
+                    cellgrid.getCell(i, j).setBackColor(colors[colorIndex]);
                 }
             }
         } else {
@@ -195,6 +198,7 @@ public class TColorPicker extends TWidget {
                     int colorIndex = reverse ? colors.length - 1 - index % colors.length : index % colors.length;
                     cellgrid.getCell(i, j).setForeColor(colors[colorIndex]);
                     cellgrid.getCell(i, j).setBold(index / colors.length == (boldFirst ? 0 : 1));
+                    cellgrid.getCell(i, j).setBackColor(colors[colorIndex]);
                 }
             }
         }
@@ -206,6 +210,38 @@ public class TColorPicker extends TWidget {
      */
     @Override
     public void draw() {
+        Cell cell = cellgrid.getCell(0,0);
+
+        cell.setChar(GraphicsChars.DOT);
+        cell.setForeColor(Color.WHITE);
+
+        cell = cellgrid.getCell(1,0);
+        cell.setChar(GraphicsChars.CIRCLE);
+        cell.setForeColor(Color.WHITE);
+
+        cell = cellgrid.getCell(2, 0);
+
+        cell.setChar(GraphicsChars.DOT);
+        cell.setForeColor(Color.BLACK);
+//        cell.setBold(true);
+
+        cell = cellgrid.getCell(3,0);
+        cell.setChar(GraphicsChars.CIRCLE);
+        cell.setForeColor(Color.BLACK);
+//        cell.setBold(true);
+
+
+        cell = cellgrid.getCell(0,1);
+
+        cell.setChar(GraphicsChars.DOT_INVERTED);
+//        cell.setForeColor(Color.WHITE);
+//        cell.setBold(true);
+
+        cell = cellgrid.getCell(1,1);
+        cell.setChar(GraphicsChars.CIRCLE_INVERTED);
+//        cell.setForeColor(Color.WHITE);
+//        cell.setBold(true);
+
         for (int i = 0; i < getWidth(); i++) {
             for (int j = 0; j < getHeight(); j++) {
                     getScreen().putCharXY(i, j, cellgrid.getCell(i, j));

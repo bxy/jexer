@@ -85,14 +85,14 @@ public class PlaygroundWindow extends TWindow {
                 });
 
 
-        String ansiChars = "\u258c\u2580\u2584\u00b7\u25a0" +
-                "\u00A0\u2591\u2592\u2593\u2588\u2593\u2592\u2591\u00A0" +
-                "\u25a0\u00b7\u2584\u2580\u2590";
+        String ansiArtChars = "\u258c\u2580\u2584\u00b7\u25a0" +
+                "\u00a0\u2591\u2592\u2593\u2588\u2593\u2592\u2591\u00a0" +
+                "\u25a0\u00b7\u2584\u2580\u2590\u2685\u265c";
 
 //        String ansiChars = "\u2590\u258c\u2580\u2584\u00b7\u25a0" +
 //                "\u00A0\u2591\u2592\u2593\u2588";
 
-        ansiArtLabel = new TCellgridLabel(this, 59, 12, new Cellgrid(ansiChars.length() ,2, ansiChars.toCharArray()));
+        ansiArtLabel = new TCellgridLabel(this, 59, 12, new Cellgrid(ansiArtChars.length() ,2, ansiArtChars.toCharArray()));
 
         String drawingChars = "\u2580\u2581\u2582\u2583\u2584\u2585\u2586\u2587\u2588\u2589\u258a\u258b\u258c\u258d\u258e\u258f" +
                 "\u2590\u2591\u2592\u2593\u2594\u2595\u2596\u2597\u2598\u2599\u259a\u259b\u259c\u259d\u259e\u259f";
