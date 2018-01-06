@@ -1125,8 +1125,14 @@ public class TApplication implements Runnable {
         }
 
         secondaryEventReceiver.handleEvent(event);
-        if (doubleClick != null) {
-            secondaryEventReceiver.handleEvent(doubleClick);
+        // Note that it is possible for secondaryEventReceiver to be null
+        // now, because its handleEvent() might have finished out on the
+        // secondary thread.  So put any extra processing inside a null
+        // check.
+        if (secondaryEventReceiver != null) {
+            if (doubleClick != null) {
+                secondaryEventReceiver.handleEvent(doubleClick);
+            }
         }
     }
 
@@ -1384,8 +1390,16 @@ public class TApplication implements Runnable {
                 System.currentTimeMillis(), Thread.currentThread(), x, y);
         }
         CellAttributes attr = getScreen().getAttrXY(x, y);
-        attr.setForeColor(attr.getForeColor().invert());
-        attr.setBackColor(attr.getBackColor().invert());
+        if (attr.getForeColorRGB() < 0) {
+            attr.setForeColor(attr.getForeColor().invert());
+        } else {
+            attr.setForeColorRGB(attr.getForeColorRGB() ^ 0x00ffffff);
+        }
+        if (attr.getBackColorRGB() < 0) {
+            attr.setBackColor(attr.getBackColor().invert());
+        } else {
+            attr.setBackColorRGB(attr.getBackColorRGB() ^ 0x00ffffff);
+        }
         getScreen().putAttrXY(x, y, attr, false);
     }
 
@@ -1902,11 +1916,12 @@ public class TApplication implements Runnable {
     }
 
     /**
-     * Add a window to my window list and make it active.
+     * Add a window to my window list and make it active.  Note package
+     * private access.
      *
      * @param window new window to add
      */
-    public final void addWindowToApplication(final TWindow window) {
+    final void addWindowToApplication(final TWindow window) {
 
         // Do not add menu windows to the window list.
         if (window instanceof TMenu) {
@@ -1919,6 +1934,11 @@ public class TApplication implements Runnable {
         }
 
         synchronized (windows) {
+            if (windows.contains(window)) {
+                throw new IllegalArgumentException("Window " + window +
+                    " is already in window list");
+            }
+
             // Whatever window might be moving/dragging, stop it now.
             for (TWindow w: windows) {
                 if (w.inMovements()) {
@@ -2946,6 +2966,7 @@ public class TApplication implements Runnable {
      * @param title window title, will be centered along the top border
      * @param width width of window
      * @param height height of window
+     * @return the new window
      */
     public final TWindow addWindow(final String title, final int width,
         final int height) {
@@ -2962,6 +2983,7 @@ public class TApplication implements Runnable {
      * @param width width of window
      * @param height height of window
      * @param flags bitmask of RESIZABLE, CENTERED, or MODAL
+     * @return the new window
      */
     public final TWindow addWindow(final String title,
         final int width, final int height, final int flags) {
@@ -2978,6 +3000,7 @@ public class TApplication implements Runnable {
      * @param y row relative to parent
      * @param width width of window
      * @param height height of window
+     * @return the new window
      */
     public final TWindow addWindow(final String title,
         final int x, final int y, final int width, final int height) {
@@ -2995,6 +3018,7 @@ public class TApplication implements Runnable {
      * @param width width of window
      * @param height height of window
      * @param flags mask of RESIZABLE, CENTERED, or MODAL
+     * @return the new window
      */
     public final TWindow addWindow(final String title,
         final int x, final int y, final int width, final int height,
@@ -3009,6 +3033,7 @@ public class TApplication implements Runnable {
      * active.
      *
      * @param file the file to open
+     * @return the new editor window
      * @throws IOException if a java.io operation throws
      */
     public final TEditorWindow addEditor(final File file) throws IOException {

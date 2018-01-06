@@ -43,7 +43,7 @@ import static jexer.TKeypress.*;
  * TEditorWidget displays an editable text document.  It is unaware of
  * scrolling behavior, but can respond to mouse and keyboard events.
  */
-public final class TEditorWidget extends TWidget {
+public class TEditorWidget extends TWidget {
 
     /**
      * The number of lines to scroll on mouse wheel up/down.
@@ -164,7 +164,7 @@ public final class TEditorWidget extends TWidget {
 
             document.setLineNumber(newLine);
             setCursorY(mouse.getY());
-            if (newX > document.getCurrentLine().getDisplayLength()) {
+            if (newX >= document.getCurrentLine().getDisplayLength()) {
                 document.end();
                 alignCursor();
             } else {
