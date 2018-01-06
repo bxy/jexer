@@ -219,18 +219,27 @@ public class TColorPicker extends TWidget {
             // fill from top to bottom
             for (int j = 0; j < cellgrid.getHeight(); j++) {
                 for (int i = 0; i < cellgrid.getWidth(); i++) {
-                    cellgrid.getCell(i, j).setForeColor(calcColorFromPosition(i,j));
-                    cellgrid.getCell(i, j).setBold(calcBoldFromPosition(i,j));
+                    fillCell(i,j);
                 }
             }
         } else {
             // fill from left to right
             for (int i = 0; i < cellgrid.getWidth(); i++) {
                 for (int j = 0; j < cellgrid.getHeight(); j++) {
-                    cellgrid.getCell(i, j).setForeColor(calcColorFromPosition(i,j));
-                    cellgrid.getCell(i, j).setBold(calcBoldFromPosition(i,j));
+                    fillCell(i,j);
                 }
             }
+        }
+    }
+
+    private void fillCell(final int i, final int j) {
+        int idx = calcIndexFromPosition(i,j);
+        Color color = colors[calcColorIndexFromIndex(idx)];
+        boolean bold = calcBoldFromIndex(idx);
+        cellgrid.getCell(i, j).setForeColor(color);
+        cellgrid.getCell(i, j).setBold(bold);
+        if (Color.BLACK.equals(color) && !bold) {
+            cellgrid.getCell(i, j).setBackColor(Color.WHITE);
         }
     }
 
@@ -242,7 +251,7 @@ public class TColorPicker extends TWidget {
         }
     }
 
-    private int getXFromIndex(final int index) {
+    private int calcXFromIndex(final int index) {
         if(topDown) {
             return index / verticalColors * colorWidth;
         } else {
@@ -250,7 +259,7 @@ public class TColorPicker extends TWidget {
         }
     }
 
-    private int getYFromIndex(final int index) {
+    private int calcYFromIndex(final int index) {
         if(topDown) {
             return index % verticalColors * colorHeight;
         } else {
@@ -266,10 +275,6 @@ public class TColorPicker extends TWidget {
         return index / colors.length == (boldFirst ? 0 : 1);
     }
 
-    private Color calcColorFromPosition(final int x, final int y) {
-        return colors[calcColorIndexFromIndex(calcIndexFromPosition(x,y))];
-    }
-
     private boolean calcBoldFromPosition(final int x, final int y) {
         return calcBoldFromIndex(calcIndexFromPosition(x,y));
     }
@@ -279,42 +284,10 @@ public class TColorPicker extends TWidget {
      */
     @Override
     public void draw() {
-//        Cell cell = cellgrid.getCell(0,0);
-//
-//        cell.setChar(GraphicsChars.DOT);
-//        cell.setForeColor(Color.WHITE);
-//
-//        cell = cellgrid.getCell(1,0);
-//        cell.setChar(GraphicsChars.CIRCLE);
-//        cell.setForeColor(Color.WHITE);
-//
-//        cell = cellgrid.getCell(2, 0);
-//
-//        cell.setChar(GraphicsChars.DOT);
-//        cell.setForeColor(Color.BLACK);
-////        cell.setBold(true);
-//
-//        cell = cellgrid.getCell(3,0);
-//        cell.setChar(GraphicsChars.CIRCLE);
-//        cell.setForeColor(Color.BLACK);
-////        cell.setBold(true);
-//
-//
-//        cell = cellgrid.getCell(0,1);
-//
-//        cell.setChar(GraphicsChars.DOT_INVERTED);
-////        cell.setForeColor(Color.WHITE);
-////        cell.setBold(true);
-//
-//        cell = cellgrid.getCell(1,1);
-//        cell.setChar(GraphicsChars.CIRCLE_INVERTED);
-////        cell.setForeColor(Color.WHITE);
-////        cell.setBold(true);
-
-        int fgX = getXFromIndex(fgIdx);
-        int fgY = getYFromIndex(fgIdx);
-        int bgX = getXFromIndex(bgIdx) + colorWidth - 1;
-        int bgY = getYFromIndex(bgIdx) + colorHeight - 1;
+        int fgX = calcXFromIndex(fgIdx);
+        int fgY = calcYFromIndex(fgIdx);
+        int bgX = calcXFromIndex(bgIdx) + colorWidth - 1;
+        int bgY = calcYFromIndex(bgIdx) + colorHeight - 1;
 
         for (int i = 0; i < getWidth(); i++) {
             for (int j = 0; j < getHeight(); j++) {
@@ -361,7 +334,6 @@ public class TColorPicker extends TWidget {
             fgIdx = calcIndexFromPosition(mouse.getX(), mouse.getY());
             foregroundColor = colors[calcColorIndexFromIndex(fgIdx)];
             bold = calcBoldFromIndex(fgIdx);
-
         } else if (mouse.isMouse3() && !calcBoldFromPosition(mouse.getX(), mouse.getY())) {
             bgIdx = calcIndexFromPosition(mouse.getX(), mouse.getY());
             backgroundColor = colors[calcColorIndexFromIndex(bgIdx)];
