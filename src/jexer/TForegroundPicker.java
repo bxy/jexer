@@ -281,11 +281,6 @@ public class TForegroundPicker extends TWidget {
         }
     }
 
-    @Override
-    public void onMouseMotion(TMouseEvent mouse) {
-        super.onMouseMotion(mouse);
-    }
-
     /**
      * Handle keystrokes.
      *
