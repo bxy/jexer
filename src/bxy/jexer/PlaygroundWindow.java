@@ -109,15 +109,36 @@ public class PlaygroundWindow extends TWindow {
 
         boxDrawingLabel = new TCellgridPicker(this, 1, 13, new Cellgrid(16,8, getTheme().getColor("ttext"), boxDrawingChars));
 
-        new TColorPicker(this, 46, 16, 2, 1);
+        new TColorPicker(this, 46, 16, 2, 1,
+                new TAction() {
+                    // When the user presses Enter
+                    public void DO() {
+                        refreshLabel();
+                    }
+                },
+                new TAction() {
+                    // When the user presses Enter
+                    public void DO() {
+                        refreshLabel();
+                    }
+                });
 
     }
 
     private void refreshLabel() {
         CellAttributes cellAttributes = new CellAttributes();
-        cellAttributes.setForeColor(foregroundPicker.getColor());
-        cellAttributes.setBold(foregroundPicker.isBold());
-        cellAttributes.setBackColor(backgroundPicker.getColor());
+
+        if(getActiveChild() instanceof TColorPicker) {
+            TColorPicker colorPicker = (TColorPicker) getActiveChild();
+            cellAttributes.setForeColor(colorPicker.getForegroundColor());
+            cellAttributes.setBold(colorPicker.isBold());
+            cellAttributes.setBackColor(colorPicker.getBackgroundColor());
+        } else {
+            cellAttributes.setForeColor(foregroundPicker.getColor());
+            cellAttributes.setBold(foregroundPicker.isBold());
+            cellAttributes.setBackColor(backgroundPicker.getColor());
+        }
+
         asciiLabel.setOverrideCellAttributes(cellAttributes);
         ansiArtLabel.setOverrideCellAttributes(cellAttributes);
     }

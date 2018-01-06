@@ -1,11 +1,12 @@
 package bxy.jexer;
 
-import bxy.jexer.Cellgrid;
+import jexer.TAction;
 import jexer.TWidget;
 import jexer.bits.Cell;
 import jexer.bits.CellAttributes;
 import jexer.bits.Color;
 import jexer.bits.GraphicsChars;
+import jexer.event.TMouseEvent;
 
 public class TColorPicker extends TWidget {
 
@@ -26,10 +27,6 @@ public class TColorPicker extends TWidget {
      * height of one colored cell
      */
     private int colorHeight;
-    /**
-     * color grid flags
-     */
-    private int flags;
 
     /**
      * default colors
@@ -39,23 +36,23 @@ public class TColorPicker extends TWidget {
     /**
      * horizontal number of colored cells, used internally best values 16, 8, 4, 2, 1
      */
-    private static int horizontalColors = 0;
+    private int horizontalColors = 0;
     /**
      * vertical count of colored cells, used internally best values 1, 2, 4, 8, 16
      */
-    private static int verticalColors = 0;
+    private int verticalColors = 0;
     /**
      * should bold colors be drawn first
      */
-    private static boolean boldFirst;
+    private boolean boldFirst;
     /**
      * should colored grid be populated from top to down, left to right or left to right, top to down
      */
-    private static boolean topDown;
+    private boolean topDown;
     /**
      * should colored grid be populated with colors in reverse order
      */
-    private static boolean reverse;
+    private boolean reverse;
 
     /**
      * grid 4x4, default no box
@@ -82,26 +79,33 @@ public class TColorPicker extends TWidget {
      */
     public static final int REVERSE = 0x20;
 
+    /**
+     * The action to perform when the user selects an item (clicks or enter).
+     */
+    private TAction enterAction = null;
+
+    /**
+     * The action to perform when the user navigates with keyboard.
+     */
+    private TAction moveAction = null;
+
+    /**
+     * selected color index
+     */
+    private int fgIdx, bgIdx;
+
+    private Color foregroundColor = Color.WHITE;
+    private boolean bold = false;
+    private Color backgroundColor = Color.BLACK;
+
 
     /**
      * parse flags, calculate horizontal colors, vertical colors, boldFirst, topDown and reverse
      * @param flags
      */
-    private static void parseFlags(int flags){
-        // if grid bit is set ignore one_line and vertical bit flags
-        if ((flags & BOX) != 0) {
-            horizontalColors = 4;
-        } else if ((flags & ONE_LINE) != 0 && (flags & VERTICAL) != 0) {
-            horizontalColors = 1;
-        } else if ((flags & ONE_LINE) != 0 && (flags & VERTICAL) == 0) {
-            horizontalColors = 16;
-        } else if ((flags & VERTICAL) != 0) {
-            horizontalColors = 2;
-        } else {
-            horizontalColors = 8;
-        }
-
-        verticalColors = colors.length * 2 / horizontalColors;
+    private void parseFlags(int flags){
+        horizontalColors = calcHorizontalColors(flags);
+        verticalColors = calcVerticalColors(flags);
 
         boldFirst = (flags & BOLD_FIRST) != 0;
         topDown = (flags & TOP_DOWN) != 0;
@@ -109,23 +113,31 @@ public class TColorPicker extends TWidget {
     }
 
     /**
-     * calculate horizontal colors if needed than return
+     * calculate horizontal colors
      * @param flags
      * @return
      */
-    private static int getHorizontalColors(final int flags) {
-        if (horizontalColors == 0) parseFlags(flags);
-        return horizontalColors;
+    private static int calcHorizontalColors(final int flags) {
+        if ((flags & BOX) != 0) {
+            return 4;
+        } else if ((flags & ONE_LINE) != 0 && (flags & VERTICAL) != 0) {
+            return 1;
+        } else if ((flags & ONE_LINE) != 0 && (flags & VERTICAL) == 0) {
+            return 16;
+        } else if ((flags & VERTICAL) != 0) {
+            return 2;
+        } else {
+            return 8;
+        }
     }
 
     /**
-     * calculate vertical colors if needed than return
+     * calculate vertical colors
      * @param flags
      * @return
      */
-    private static int getVerticalColors(final int flags) {
-        if (verticalColors == 0) parseFlags(flags);
-        return verticalColors;
+    private static int calcVerticalColors(final int flags) {
+        return colors.length * 2 / calcHorizontalColors(flags);
     }
 
     /**
@@ -135,7 +147,12 @@ public class TColorPicker extends TWidget {
      * @param y row relative to parent
      */
     public TColorPicker(final TWidget parent, final int x, final int y) {
-        this(parent, x, y, 2, 1,0);
+        this(parent, x, y, null, null);
+    }
+
+    public TColorPicker(final TWidget parent, final int x, final int y,
+                        final TAction enterAction, final TAction moveAction) {
+        this(parent, x, y, 2, 1,0, enterAction, moveAction);
     }
 
     /**
@@ -147,7 +164,12 @@ public class TColorPicker extends TWidget {
      * @param colorHeight height of one colored cell
      */
     public TColorPicker(final TWidget parent, final int x, final int y, final int colorWidth, final int colorHeight) {
-        this(parent, x, y, colorWidth, colorHeight,0);
+        this(parent, x, y, colorWidth, colorHeight,null, null);
+    }
+
+    public TColorPicker(final TWidget parent, final int x, final int y, final int colorWidth, final int colorHeight,
+                        final TAction enterAction, final TAction moveAction) {
+        this(parent, x, y, colorWidth, colorHeight,0, enterAction, moveAction);
     }
 
     /**
@@ -158,7 +180,12 @@ public class TColorPicker extends TWidget {
      * @param flags creation flags
      */
     public TColorPicker(final TWidget parent, final int x, final int y, final int flags) {
-        this(parent, x, y, 2, 1, flags);
+        this(parent, x, y, flags, null, null);
+    }
+
+    public TColorPicker(final TWidget parent, final int x, final int y, final int flags,
+                        final TAction enterAction, final TAction moveAction) {
+        this(parent, x, y, 2, 1, flags, enterAction, moveAction);
     }
 
     /**
@@ -171,9 +198,18 @@ public class TColorPicker extends TWidget {
      * @param flags creation flags
      */
     public TColorPicker(final TWidget parent, final int x, final int y, final int colorWidth, final int colorHeight, final int flags) {
-        super(parent, x, y, getHorizontalColors(flags) * colorWidth, getVerticalColors(flags) * colorHeight);
+        this(parent, x, y, colorWidth, colorHeight, flags, null, null);
+    }
 
-        this.flags = flags;
+    public TColorPicker(final TWidget parent, final int x, final int y, final int colorWidth, final int colorHeight, final int flags,
+                        final TAction enterAction, final TAction moveAction) {
+        super(parent, x, y, calcHorizontalColors(flags) * colorWidth, calcVerticalColors(flags) * colorHeight);
+
+        this.moveAction = moveAction;
+        this.enterAction = enterAction;
+
+        parseFlags(flags);
+
         this.colorWidth = colorWidth;
         this.colorHeight = colorHeight;
 
@@ -183,26 +219,59 @@ public class TColorPicker extends TWidget {
             // fill from top to bottom
             for (int j = 0; j < cellgrid.getHeight(); j++) {
                 for (int i = 0; i < cellgrid.getWidth(); i++) {
-                    int index = (i / colorWidth * verticalColors + j / colorHeight);
-                    int colorIndex = reverse ? colors.length - 1 - index % colors.length : index % colors.length;
-                    cellgrid.getCell(i, j).setForeColor(colors[colorIndex]);
-                    cellgrid.getCell(i, j).setBold(index / colors.length == (boldFirst ? 0 : 1));
-                    cellgrid.getCell(i, j).setBackColor(colors[colorIndex]);
+                    cellgrid.getCell(i, j).setForeColor(calcColorFromPosition(i,j));
+                    cellgrid.getCell(i, j).setBold(calcBoldFromPosition(i,j));
                 }
             }
         } else {
             // fill from left to right
             for (int i = 0; i < cellgrid.getWidth(); i++) {
                 for (int j = 0; j < cellgrid.getHeight(); j++) {
-                    int index = (j / colorHeight * horizontalColors + i / colorWidth);
-                    int colorIndex = reverse ? colors.length - 1 - index % colors.length : index % colors.length;
-                    cellgrid.getCell(i, j).setForeColor(colors[colorIndex]);
-                    cellgrid.getCell(i, j).setBold(index / colors.length == (boldFirst ? 0 : 1));
-                    cellgrid.getCell(i, j).setBackColor(colors[colorIndex]);
+                    cellgrid.getCell(i, j).setForeColor(calcColorFromPosition(i,j));
+                    cellgrid.getCell(i, j).setBold(calcBoldFromPosition(i,j));
                 }
             }
         }
+    }
 
+    private int calcIndexFromPosition(final int x, final int y) {
+        if(topDown) {
+            return x / colorWidth * verticalColors + y / colorHeight;
+        } else {
+            return y / colorHeight * horizontalColors + x / colorWidth;
+        }
+    }
+
+    private int getXFromIndex(final int index) {
+        if(topDown) {
+            return index / verticalColors * colorWidth;
+        } else {
+            return index % horizontalColors * colorWidth;
+        }
+    }
+
+    private int getYFromIndex(final int index) {
+        if(topDown) {
+            return index % verticalColors * colorHeight;
+        } else {
+            return index / horizontalColors * colorHeight;
+        }
+    }
+
+    private int calcColorIndexFromIndex(final int index) {
+        return reverse ? colors.length - 1 - index % colors.length : index % colors.length;
+    }
+
+    private boolean calcBoldFromIndex(final int index) {
+        return index / colors.length == (boldFirst ? 0 : 1);
+    }
+
+    private Color calcColorFromPosition(final int x, final int y) {
+        return colors[calcColorIndexFromIndex(calcIndexFromPosition(x,y))];
+    }
+
+    private boolean calcBoldFromPosition(final int x, final int y) {
+        return calcBoldFromIndex(calcIndexFromPosition(x,y));
     }
 
     /**
@@ -210,43 +279,109 @@ public class TColorPicker extends TWidget {
      */
     @Override
     public void draw() {
-        Cell cell = cellgrid.getCell(0,0);
-
-        cell.setChar(GraphicsChars.DOT);
-        cell.setForeColor(Color.WHITE);
-
-        cell = cellgrid.getCell(1,0);
-        cell.setChar(GraphicsChars.CIRCLE);
-        cell.setForeColor(Color.WHITE);
-
-        cell = cellgrid.getCell(2, 0);
-
-        cell.setChar(GraphicsChars.DOT);
-        cell.setForeColor(Color.BLACK);
-//        cell.setBold(true);
-
-        cell = cellgrid.getCell(3,0);
-        cell.setChar(GraphicsChars.CIRCLE);
-        cell.setForeColor(Color.BLACK);
-//        cell.setBold(true);
-
-
-        cell = cellgrid.getCell(0,1);
-
-        cell.setChar(GraphicsChars.DOT_INVERTED);
+//        Cell cell = cellgrid.getCell(0,0);
+//
+//        cell.setChar(GraphicsChars.DOT);
 //        cell.setForeColor(Color.WHITE);
-//        cell.setBold(true);
-
-        cell = cellgrid.getCell(1,1);
-        cell.setChar(GraphicsChars.CIRCLE_INVERTED);
+//
+//        cell = cellgrid.getCell(1,0);
+//        cell.setChar(GraphicsChars.CIRCLE);
 //        cell.setForeColor(Color.WHITE);
-//        cell.setBold(true);
+//
+//        cell = cellgrid.getCell(2, 0);
+//
+//        cell.setChar(GraphicsChars.DOT);
+//        cell.setForeColor(Color.BLACK);
+////        cell.setBold(true);
+//
+//        cell = cellgrid.getCell(3,0);
+//        cell.setChar(GraphicsChars.CIRCLE);
+//        cell.setForeColor(Color.BLACK);
+////        cell.setBold(true);
+//
+//
+//        cell = cellgrid.getCell(0,1);
+//
+//        cell.setChar(GraphicsChars.DOT_INVERTED);
+////        cell.setForeColor(Color.WHITE);
+////        cell.setBold(true);
+//
+//        cell = cellgrid.getCell(1,1);
+//        cell.setChar(GraphicsChars.CIRCLE_INVERTED);
+////        cell.setForeColor(Color.WHITE);
+////        cell.setBold(true);
+
+        int fgX = getXFromIndex(fgIdx);
+        int fgY = getYFromIndex(fgIdx);
+        int bgX = getXFromIndex(bgIdx) + colorWidth - 1;
+        int bgY = getYFromIndex(bgIdx) + colorHeight - 1;
 
         for (int i = 0; i < getWidth(); i++) {
             for (int j = 0; j < getHeight(); j++) {
+                Cell cell = cellgrid.getCellCopy(i,j);
+                if (i == fgX && j == fgY) {
+                    cell.setChar(GraphicsChars.DOT_INVERTED);
+                    getScreen().putCharXY(i, j, cell);
+                } else if (i == bgX && j == bgY) {
+                    cell.setChar(GraphicsChars.CIRCLE_INVERTED);
+                    getScreen().putCharXY(i, j, cell);
+                } else {
                     getScreen().putCharXY(i, j, cellgrid.getCell(i, j));
+                }
             }
         }
+    }
+
+    /**
+     * Perform user selection action.
+     */
+    public void dispatchEnter() {
+        if (enterAction != null) {
+            enterAction.DO();
+        }
+    }
+
+    /**
+     * Perform list movement action.
+     */
+    public void dispatchMove() {
+        if (moveAction != null) {
+            moveAction.DO();
+        }
+    }
+
+    /**
+     * Handle mouse up events.
+     *
+     * @param mouse mouse button up event
+     */
+    @Override
+    public void onMouseUp(final TMouseEvent mouse) {
+        if(mouse.isMouse1()) {
+            fgIdx = calcIndexFromPosition(mouse.getX(), mouse.getY());
+            foregroundColor = colors[calcColorIndexFromIndex(fgIdx)];
+            bold = calcBoldFromIndex(fgIdx);
+
+        } else if (mouse.isMouse3() && !calcBoldFromPosition(mouse.getX(), mouse.getY())) {
+            bgIdx = calcIndexFromPosition(mouse.getX(), mouse.getY());
+            backgroundColor = colors[calcColorIndexFromIndex(bgIdx)];
+        } else {
+            return;
+        }
+
+        dispatchMove();
+    }
+
+    public Color getForegroundColor() {
+        return foregroundColor;
+    }
+
+    public boolean isBold() {
+        return bold;
+    }
+
+    public Color getBackgroundColor() {
+        return backgroundColor;
     }
 }
 
