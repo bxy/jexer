@@ -2,6 +2,7 @@ package bxy.jexer;
 
 import jexer.TAction;
 import jexer.TApplication;
+import jexer.TWidget;
 import jexer.TWindow;
 import jexer.bits.CellAttributes;
 
@@ -68,11 +69,20 @@ public class ColorPickerWindow extends TWindow {
         if(getActiveChild() instanceof TColorPicker) {
             TColorPicker colorPicker = (TColorPicker) getActiveChild();
             CellAttributes cellAttributes = new CellAttributes();
-            cellAttributes.setForeColor(colorPicker.getForegroundColor());
+            cellAttributes.setForeColor(colorPicker.getFgColor());
             cellAttributes.setBold(colorPicker.isBold());
-            cellAttributes.setBackColor(colorPicker.getBackgroundColor());
+            cellAttributes.setBackColor(colorPicker.getBgColor());
             label.setOverrideCellAttributes(cellAttributes);
             label.setOverrideCellAttributes(cellAttributes);
+            for (int i = 0; i < getChildren().size(); i++) {
+                TWidget widget = getChildren().get(i);
+                if (widget instanceof TColorPicker) {
+                    TColorPicker colPick = (TColorPicker) widget;
+                    colPick.setFgColor(colorPicker.getFgColor());
+                    colPick.setBold(colorPicker.isBold());
+                    colPick.setBgColor(colorPicker.getBgColor());
+                }
+            }
         }
     }
 }

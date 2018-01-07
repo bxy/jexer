@@ -130,9 +130,9 @@ public class PlaygroundWindow extends TWindow {
 
         if(getActiveChild() instanceof TColorPicker) {
             TColorPicker colorPicker = (TColorPicker) getActiveChild();
-            cellAttributes.setForeColor(colorPicker.getForegroundColor());
+            cellAttributes.setForeColor(colorPicker.getFgColor());
             cellAttributes.setBold(colorPicker.isBold());
-            cellAttributes.setBackColor(colorPicker.getBackgroundColor());
+            cellAttributes.setBackColor(colorPicker.getBgColor());
         } else {
             cellAttributes.setForeColor(foregroundPicker.getColor());
             cellAttributes.setBold(foregroundPicker.isBold());

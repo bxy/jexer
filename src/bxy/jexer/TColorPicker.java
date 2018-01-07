@@ -6,7 +6,11 @@ import jexer.bits.Cell;
 import jexer.bits.CellAttributes;
 import jexer.bits.Color;
 import jexer.bits.GraphicsChars;
+import jexer.event.TKeypressEvent;
 import jexer.event.TMouseEvent;
+
+import static jexer.TKeypress.*;
+import static jexer.TKeypress.kbEnter;
 
 public class TColorPicker extends TWidget {
 
@@ -94,9 +98,11 @@ public class TColorPicker extends TWidget {
      */
     private int fgIdx, bgIdx;
 
-    private Color foregroundColor = Color.WHITE;
+    private boolean fgSelect = true;
+
+    private Color fgColor = Color.WHITE;
     private boolean bold = false;
-    private Color backgroundColor = Color.BLACK;
+    private Color bgColor = Color.BLACK;
 
 
     /**
@@ -213,6 +219,9 @@ public class TColorPicker extends TWidget {
         this.colorWidth = colorWidth;
         this.colorHeight = colorHeight;
 
+        this.fgIdx = calcIndexFromColor(fgColor, bold);
+        this.bgIdx = calcIndexFromColor(bgColor, false);
+
         cellgrid = new Cellgrid(getWidth(),getHeight(), new char[]{'\u2588'});
 
         if (topDown) {
@@ -279,6 +288,24 @@ public class TColorPicker extends TWidget {
         return calcBoldFromIndex(calcIndexFromPosition(x,y));
     }
 
+    private int calcIndexFromColor(final Color color, final boolean bold) {
+        int idx = -1;
+        for (int i = 0; i < colors.length; i++) {
+            if (colors[i].equals(color)) {
+                idx = i;
+                break;
+            }
+        }
+
+        if(bold) {
+            idx = boldFirst ? (reverse ? colors.length - 1 - idx : idx) : colors.length + (reverse ? colors.length - 1 - idx : idx);
+        } else {
+            idx = boldFirst ? colors.length + (reverse ? colors.length - 1 - idx : idx) : (reverse ? colors.length - 1 - idx : idx);
+        }
+
+        return idx;
+    }
+
     /**
      * Draw widget
      */
@@ -331,29 +358,114 @@ public class TColorPicker extends TWidget {
     @Override
     public void onMouseUp(final TMouseEvent mouse) {
         if(mouse.isMouse1()) {
-            fgIdx = calcIndexFromPosition(mouse.getX(), mouse.getY());
-            foregroundColor = colors[calcColorIndexFromIndex(fgIdx)];
-            bold = calcBoldFromIndex(fgIdx);
-        } else if (mouse.isMouse3() && !calcBoldFromPosition(mouse.getX(), mouse.getY())) {
-            bgIdx = calcIndexFromPosition(mouse.getX(), mouse.getY());
-            backgroundColor = colors[calcColorIndexFromIndex(bgIdx)];
-        } else {
-            return;
+            fgSelect = true;
+            calcColors(mouse.getX(), mouse.getY());
+            dispatchMove();
+        } else if (mouse.isMouse3()) {
+            fgSelect = false;
+            calcColors(mouse.getX(), mouse.getY());
+            dispatchMove();
         }
-
-        dispatchMove();
     }
 
-    public Color getForegroundColor() {
-        return foregroundColor;
+    /**
+     * Handle mouse double click.
+     *
+     * @param mouse mouse double click event
+     */
+    @Override
+    public void onMouseDoubleClick(final TMouseEvent mouse) {
+        dispatchEnter();
+    }
+
+    private void calcColors(final int x, final int y) {
+        if (fgSelect) {
+            fgIdx = calcIndexFromPosition(x, y);
+            fgColor = colors[calcColorIndexFromIndex(fgIdx)];
+            bold = calcBoldFromIndex(fgIdx);
+        } else if (!calcBoldFromPosition(x, y)) {
+            bgIdx = calcIndexFromPosition(x, y);
+            bgColor = colors[calcColorIndexFromIndex(bgIdx)];
+        }
+    }
+
+    /**
+     * Handle keystrokes.
+     *
+     * @param keypress keystroke event
+     */
+    @Override
+    public void onKeypress(final TKeypressEvent keypress) {
+        if(keypress.equals(kbF)) {
+            fgSelect = true;
+        } else if (keypress.equals(kbB)) {
+            fgSelect = false;
+        } else if (keypress.equals(kbSpace)) {
+            fgSelect = !fgSelect;
+        } else if (keypress.equals(kbRight)) {
+            int dotX = calcXFromIndex(fgSelect ? fgIdx : bgIdx);
+            int dotY = calcYFromIndex(fgSelect ? fgIdx : bgIdx);
+            if (dotX < getWidth() - colorWidth) {
+                dotX += colorWidth;
+            }
+            calcColors(dotX, dotY);
+            dispatchMove();
+        } else if (keypress.equals(kbLeft)) {
+            int dotX = calcXFromIndex(fgSelect ? fgIdx : bgIdx);
+            int dotY = calcYFromIndex(fgSelect ? fgIdx : bgIdx);
+            if (dotX >= colorWidth) {
+                dotX -= colorWidth;
+            }
+            calcColors(dotX, dotY);
+            dispatchMove();
+        } else if (keypress.equals(kbUp)) {
+            int dotX = calcXFromIndex(fgSelect ? fgIdx : bgIdx);
+            int dotY = calcYFromIndex(fgSelect ? fgIdx : bgIdx);
+            if (dotY >= colorHeight) {
+                dotY -= colorHeight;
+            }
+            calcColors(dotX, dotY);
+            dispatchMove();
+        } else if (keypress.equals(kbDown)) {
+            int dotX = calcXFromIndex(fgSelect ? fgIdx : bgIdx);
+            int dotY = calcYFromIndex(fgSelect ? fgIdx : bgIdx);
+            if (dotY < getHeight() - colorHeight) {
+                dotY += colorHeight;
+            }
+            calcColors(dotX, dotY);
+            dispatchMove();
+        } else if (keypress.equals(kbEnter)) {
+            dispatchEnter();
+        } else {
+            super.onKeypress(keypress);
+        }
+    }
+
+    public Color getFgColor() {
+        return fgColor;
+    }
+
+    public void setFgColor(Color fgColor) {
+        fgIdx = calcIndexFromColor(fgColor, bold);
+        this.fgColor = fgColor;
     }
 
     public boolean isBold() {
         return bold;
     }
 
-    public Color getBackgroundColor() {
-        return backgroundColor;
+    public void setBold(boolean bold) {
+        fgIdx = calcIndexFromColor(fgColor, bold);
+        this.bold = bold;
+    }
+
+    public Color getBgColor() {
+        return bgColor;
+    }
+
+    public void setBgColor(Color bgColor) {
+        bgIdx = calcIndexFromColor(bgColor, false);
+        this.bgColor = bgColor;
     }
 }
 
