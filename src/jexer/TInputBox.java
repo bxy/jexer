@@ -44,19 +44,18 @@ package jexer;
  */
 public class TInputBox extends TMessageBox {
 
+    // ------------------------------------------------------------------------
+    // Variables --------------------------------------------------------------
+    // ------------------------------------------------------------------------
+
     /**
      * The input field.
      */
     private TField field;
 
-    /**
-     * Retrieve the answer text.
-     *
-     * @return the answer text
-     */
-    public String getText() {
-        return field.getText();
-    }
+    // ------------------------------------------------------------------------
+    // Constructors -----------------------------------------------------------
+    // ------------------------------------------------------------------------
 
     /**
      * Public constructor.  The input box will be centered on screen.
@@ -69,7 +68,7 @@ public class TInputBox extends TMessageBox {
     public TInputBox(final TApplication application, final String title,
         final String caption) {
 
-        this(application, title, caption, "");
+        this(application, title, caption, "", Type.OK);
     }
 
     /**
@@ -84,7 +83,23 @@ public class TInputBox extends TMessageBox {
     public TInputBox(final TApplication application, final String title,
         final String caption, final String text) {
 
-        super(application, title, caption, Type.OK, false);
+        this(application, title, caption, text, Type.OK);
+    }
+
+    /**
+     * Public constructor.  The input box will be centered on screen.
+     *
+     * @param application TApplication that manages this window
+     * @param title window title, will be centered along the top border
+     * @param caption message to display.  Use embedded newlines to get a
+     * multi-line box.
+     * @param text initial text to seed the field with
+     * @param type one of the Type constants.  Default is Type.OK.
+     */
+    public TInputBox(final TApplication application, final String title,
+        final String caption, final String text, final Type type) {
+
+        super(application, title, caption, type, false);
 
         for (TWidget widget: getChildren()) {
             if (widget instanceof TButton) {
@@ -98,6 +113,23 @@ public class TInputBox extends TMessageBox {
         // Yield to the secondary thread.  When I come back from the
         // constructor response will already be set.
         getApplication().yield();
+    }
+
+    // ------------------------------------------------------------------------
+    // TInputBox --------------------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // ------------------------------------------------------------------------
+    // TMessageBox ------------------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    /**
+     * Retrieve the answer text.
+     *
+     * @return the answer text
+     */
+    public String getText() {
+        return field.getText();
     }
 
 }
