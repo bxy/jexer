@@ -35,45 +35,10 @@ package jexer.event;
  */
 public class TMenuEvent extends TInputEvent {
 
-    // ------------------------------------------------------------------------
-    // Variables --------------------------------------------------------------
-    // ------------------------------------------------------------------------
-
     /**
      * MenuItem ID.
      */
     private int id;
-
-    // ------------------------------------------------------------------------
-    // Constructors -----------------------------------------------------------
-    // ------------------------------------------------------------------------
-
-    /**
-     * Public contructor.
-     *
-     * @param id the MenuItem ID
-     */
-    public TMenuEvent(final int id) {
-        this.id = id;
-    }
-
-    // ------------------------------------------------------------------------
-    // TInputEvent ------------------------------------------------------------
-    // ------------------------------------------------------------------------
-
-    /**
-     * Make human-readable description of this TMenuEvent.
-     *
-     * @return displayable String
-     */
-    @Override
-    public String toString() {
-        return String.format("MenuEvent: %d", id);
-    }
-
-    // ------------------------------------------------------------------------
-    // TMenuEvent -------------------------------------------------------------
-    // ------------------------------------------------------------------------
 
     /**
      * Get the MenuItem ID.
@@ -84,4 +49,22 @@ public class TMenuEvent extends TInputEvent {
         return id;
     }
 
+    /**
+     * Public contructor.
+     *
+     * @param id the MenuItem ID
+     */
+    public TMenuEvent(final int id) {
+        this.id = id;
+    }
+
+    /**
+     * Make human-readable description of this TMenuEvent.
+     *
+     * @return displayable String
+     */
+    @Override
+    public String toString() {
+        return String.format("MenuEvent: %d", id);
+    }
 }

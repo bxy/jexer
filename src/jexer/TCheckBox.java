@@ -44,7 +44,7 @@ public class TCheckBox extends TWidget {
     // ------------------------------------------------------------------------
 
     /**
-     * CheckBox state, true means checked.
+     * Checkbox state, true means checked.
      */
     private boolean checked = false;
 
@@ -89,7 +89,7 @@ public class TCheckBox extends TWidget {
      * @param mouse mouse event
      * @return true if the mouse is currently on the checkbox
      */
-    private boolean mouseOnCheckBox(final TMouseEvent mouse) {
+    private boolean mouseOnCheckbox(final TMouseEvent mouse) {
         if ((mouse.getY() == 0)
             && (mouse.getX() >= 0)
             && (mouse.getX() <= 2)
@@ -106,7 +106,7 @@ public class TCheckBox extends TWidget {
      */
     @Override
     public void onMouseDown(final TMouseEvent mouse) {
-        if ((mouseOnCheckBox(mouse)) && (mouse.isMouse1())) {
+        if ((mouseOnCheckbox(mouse)) && (mouse.isMouse1())) {
             // Switch state
             checked = !checked;
         }

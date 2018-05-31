@@ -174,6 +174,7 @@ public class TKeypress {
      */
     public static final int ESC         = 43;
 
+
     // Special "no-key" keypress, used to ignore undefined keystrokes
     public static final TKeypress kbNoKey = new TKeypress(true,
             TKeypress.NONE, ' ', false, false, false);

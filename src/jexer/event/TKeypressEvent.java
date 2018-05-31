@@ -35,18 +35,19 @@ import jexer.TKeypress;
  */
 public class TKeypressEvent extends TInputEvent {
 
-    // ------------------------------------------------------------------------
-    // Variables --------------------------------------------------------------
-    // ------------------------------------------------------------------------
-
     /**
      * Keystroke received.
      */
     private TKeypress key;
 
-    // ------------------------------------------------------------------------
-    // Constructors -----------------------------------------------------------
-    // ------------------------------------------------------------------------
+    /**
+     * Get keystroke.
+     *
+     * @return keystroke
+     */
+    public TKeypress getKey() {
+        return key;
+    }
 
     /**
      * Public contructor.
@@ -88,9 +89,15 @@ public class TKeypressEvent extends TInputEvent {
             alt, ctrl, shift);
     }
 
-    // ------------------------------------------------------------------------
-    // TInputEvent ------------------------------------------------------------
-    // ------------------------------------------------------------------------
+    /**
+     * Create a duplicate instance.
+     *
+     * @return duplicate intance
+     */
+    public TKeypressEvent dup() {
+        TKeypressEvent keypress = new TKeypressEvent(key.dup());
+        return keypress;
+    }
 
     /**
      * Comparison check.  All fields must match to return true.
@@ -140,28 +147,4 @@ public class TKeypressEvent extends TInputEvent {
     public String toString() {
         return String.format("Keypress: %s", key.toString());
     }
-
-    // ------------------------------------------------------------------------
-    // TKeypressEvent ---------------------------------------------------------
-    // ------------------------------------------------------------------------
-
-    /**
-     * Get keystroke.
-     *
-     * @return keystroke
-     */
-    public TKeypress getKey() {
-        return key;
-    }
-
-    /**
-     * Create a duplicate instance.
-     *
-     * @return duplicate intance
-     */
-    public TKeypressEvent dup() {
-        TKeypressEvent keypress = new TKeypressEvent(key.dup());
-        return keypress;
-    }
-
 }

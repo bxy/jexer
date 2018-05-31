@@ -248,7 +248,7 @@ public class CellAttributes {
     /**
      * Setter for foreColor RGB.
      *
-     * @param foreColorRGB new foreColor RGB value
+     * @param foreColor new foreColor RGB value
      */
     public final void setForeColorRGB(final int foreColorRGB) {
         this.foreColorRGB = foreColorRGB;
@@ -266,7 +266,7 @@ public class CellAttributes {
     /**
      * Setter for backColor RGB.
      *
-     * @param backColorRGB new backColor RGB value
+     * @param backColor new backColor RGB value
      */
     public final void setBackColorRGB(final int backColorRGB) {
         this.backColorRGB = backColorRGB;

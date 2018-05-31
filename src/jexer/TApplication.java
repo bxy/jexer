@@ -1205,8 +1205,7 @@ public class TApplication implements Runnable {
                     keepTimers.add(timer);
                 }
             }
-            timers.clear();
-            timers.addAll(keepTimers);
+            timers = keepTimers;
         }
 
         // Call onIdle's
@@ -2062,9 +2061,6 @@ public class TApplication implements Runnable {
                 }
 
                 TWindow w = sorted.get(i);
-                int oldWidth = w.getWidth();
-                int oldHeight = w.getHeight();
-
                 w.setX(logicalX * newWidth);
                 if(w.isResizable()) w.setWidth(newWidth);
                 if (i >= ((a - 1) * b)) {
@@ -2073,12 +2069,6 @@ public class TApplication implements Runnable {
                 } else {
                     w.setY((logicalY * newHeight1) + 1);
                     if(w.isResizable()) w.setHeight(newHeight1);
-                }
-                if ((w.getWidth() != oldWidth)
-                    || (w.getHeight() != oldHeight)
-                ) {
-                    w.onResize(new TResizeEvent(TResizeEvent.Type.WIDGET,
-                            w.getWidth(), w.getHeight()));
                 }
             }
         }
@@ -2867,22 +2857,6 @@ public class TApplication implements Runnable {
         final String text) {
 
         return new TInputBox(this, title, caption, text);
-    }
-
-    /**
-     * Convenience function to spawn an input box.
-     *
-     * @param title window title, will be centered along the top border
-     * @param caption message to display.  Use embedded newlines to get a
-     * multi-line box.
-     * @param text initial text to seed the field with
-     * @param type one of the Type constants.  Default is Type.OK.
-     * @return the new input box
-     */
-    public final TInputBox inputBox(final String title, final String caption,
-        final String text, final TInputBox.Type type) {
-
-        return new TInputBox(this, title, caption, text, type);
     }
 
     /**
