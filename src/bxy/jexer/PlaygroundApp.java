@@ -23,7 +23,8 @@ public class PlaygroundApp extends TApplication {
         new PlaygroundWindow(this, 60, 16);
         new TAsciiChartWindow(this);
         new ColorPickerWindow(this, 60, 16);
-//        new TEditColorThemeWindow(this);
+        new iCEColorWindow(this, 60, 16);
+
 
     }
 

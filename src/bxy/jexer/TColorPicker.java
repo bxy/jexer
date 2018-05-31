@@ -35,7 +35,7 @@ public class TColorPicker extends TWidget {
     /**
      * default colors
      */
-    private static final Color[] colors = { Color.BLACK, Color.BLUE, Color.GREEN, Color.CYAN, Color.RED, Color.MAGENTA, Color.YELLOW, Color.WHITE};
+    public static final Color[] colors = { Color.BLACK, Color.BLUE, Color.GREEN, Color.CYAN, Color.RED, Color.MAGENTA, Color.YELLOW, Color.WHITE};
 
     /**
      * horizontal number of colored cells, used internally best values 16, 8, 4, 2, 1
@@ -222,7 +222,7 @@ public class TColorPicker extends TWidget {
         this.fgIdx = calcIndexFromColor(fgColor, bold);
         this.bgIdx = calcIndexFromColor(bgColor, false);
 
-        cellgrid = new Cellgrid(getWidth(),getHeight(), new char[]{'\u2588'});
+        cellgrid = new Cellgrid(getWidth(), getHeight(), new char[]{'\u2588'});
 
         if (topDown) {
             // fill from top to bottom

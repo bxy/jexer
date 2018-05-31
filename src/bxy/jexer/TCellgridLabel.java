@@ -17,7 +17,7 @@ public final class TCellgridLabel extends TWidget {
     /**
      * CellAttributes to override Cellgrid's cellAttributes
      */
-    private CellAttributes overrideCellAttributes;
+    private CellAttributes cellAttributes;
 
 
     /**
@@ -44,7 +44,7 @@ public final class TCellgridLabel extends TWidget {
     public TCellgridLabel(final TWidget parent, final int x, final int y, final Cellgrid cellgrid, final CellAttributes cellAttributes) {
         super(parent, x, y, cellgrid.getWidth(), cellgrid.getHeight());
         this.cellgrid = cellgrid;
-        this.overrideCellAttributes = cellAttributes;
+        this.cellAttributes = cellAttributes;
     }
 
     /**
@@ -61,9 +61,13 @@ public final class TCellgridLabel extends TWidget {
      * set cell attributes widget will use instead of cellgrid cell attributes
      * @param cellAttributes if null widget will use attributes from cellgrid
      */
-    public void setOverrideCellAttributes(CellAttributes cellAttributes) {
-        this.overrideCellAttributes = cellAttributes;
+    public void setCellAttributes(CellAttributes cellAttributes) {
+        this.cellAttributes = cellAttributes;
 
+    }
+
+    public CellAttributes getCellAttributes() {
+        return cellAttributes;
     }
 
     /**
@@ -73,8 +77,8 @@ public final class TCellgridLabel extends TWidget {
     public void draw() {
         for (int i = 0; i < getWidth(); i++) {
             for (int j = 0; j < getHeight(); j++) {
-                if(overrideCellAttributes != null)
-                    getScreen().putCharXY(i, j, cellgrid.getCell(i, j).getChar(), overrideCellAttributes);
+                if(cellAttributes != null)
+                    getScreen().putCharXY(i, j, cellgrid.getCell(i, j).getChar(), cellAttributes);
                 else {
                     getScreen().putCharXY(i, j, cellgrid.getCell(i, j));
                 }

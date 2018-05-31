@@ -72,8 +72,8 @@ public class ColorPickerWindow extends TWindow {
             cellAttributes.setForeColor(colorPicker.getFgColor());
             cellAttributes.setBold(colorPicker.isBold());
             cellAttributes.setBackColor(colorPicker.getBgColor());
-            label.setOverrideCellAttributes(cellAttributes);
-            label.setOverrideCellAttributes(cellAttributes);
+            label.setCellAttributes(cellAttributes);
+            label.setCellAttributes(cellAttributes);
             for (int i = 0; i < getChildren().size(); i++) {
                 TWidget widget = getChildren().get(i);
                 if (widget instanceof TColorPicker) {

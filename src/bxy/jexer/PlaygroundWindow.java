@@ -87,7 +87,7 @@ public class PlaygroundWindow extends TWindow {
 
         String ansiArtChars = "\u258c\u2580\u2584\u00b7\u25a0" +
                 "\u00a0\u2591\u2592\u2593\u2588\u2593\u2592\u2591\u00a0" +
-                "\u25a0\u00b7\u2584\u2580\u2590\u2685\u265c";
+                "\u25a0\u00b7\u2584\u2580\u2590\u2685\u265c\u262f";
 
 //        String ansiChars = "\u2590\u258c\u2580\u2584\u00b7\u25a0" +
 //                "\u00A0\u2591\u2592\u2593\u2588";
@@ -139,8 +139,8 @@ public class PlaygroundWindow extends TWindow {
             cellAttributes.setBackColor(backgroundPicker.getColor());
         }
 
-        asciiLabel.setOverrideCellAttributes(cellAttributes);
-        ansiArtLabel.setOverrideCellAttributes(cellAttributes);
+        asciiLabel.setCellAttributes(cellAttributes);
+        ansiArtLabel.setCellAttributes(cellAttributes);
     }
 
 
